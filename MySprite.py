@@ -2,7 +2,7 @@ from pygame.sprite import Sprite
 import pygame
 import os
 class MySprite(Sprite):
-    def __init__(self, rect, image_path=None, fallback_color=(255, 0, 0), layer=0):
+    def __init__(self, rect, image_path="./assets/player.png", fallback_color=(255, 0, 0), layer=0):
         super().__init__()
         self._layer = layer
         self.rect = pygame.Rect(rect)

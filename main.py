@@ -3,6 +3,8 @@ import pygame
 from pygame.sprite import LayeredUpdates
 from Player import Player
 from Maps import Maps
+from random import randint
+from Client import Client
 
 class Game:
     def __init__(self, screen_width=720, screen_height=720):
@@ -69,6 +71,10 @@ class Game:
                     self.next_level()
 
     def update(self):
+        if randint(1, 10) == 5:
+            client = Client(posX=0, posY=0)  # Remplace les valeurs selon ton jeu
+            print("Un client vient dans le restaurant ! " + client.__str__())
+            self.all_sprites.add(client)
         self.all_sprites.update()
 
     def draw(self):
