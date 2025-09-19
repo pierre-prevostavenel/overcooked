@@ -27,10 +27,10 @@ font = pygame.font.Font(None, 36)
 # --- CHEMINS DES IMAGES (À REMPLACER PAR VOS PROPRES IMAGES) ---
 # NOTE: Créez des fichiers .png simples (ex: un carré de 50x50 pixels) avec ces noms
 # pour que le jeu puisse se lancer.
-PLAYER_IMG_PATH = 'Assets/Gas.png'
-CUTTING_BOARD_IMG_PATH = 'Assets/White_tile.png'
-STOVE_IMG_PATH = 'Assets/Black_tile.png'
-PLATING_STATION_IMG_PATH = 'Assets/Gas.png'
+PLAYER_IMG_PATH = 'assets/player.png'
+CUTTING_BOARD_IMG_PATH = 'assets/gas.png'
+STOVE_IMG_PATH = 'assets/gas.png'
+PLATING_STATION_IMG_PATH = 'assets/white_tile.png'
 
 
 class Player(pygame.sprite.Sprite):

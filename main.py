@@ -1,3 +1,4 @@
+### main.py :
 import pygame
 from pygame.sprite import LayeredUpdates
 from Player import Player
@@ -12,16 +13,14 @@ class Game:
         pygame.display.set_caption("OverCooked")
         self.clock = pygame.time.Clock()
 
-        # Maps
-        self.maps = Maps(tile_size=screen_width // 10)
+        self.tile_size = screen_width // 10
+        self.maps = Maps(tile_size=self.tile_size)
         self.current_level_index = 0
         self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
 
-        # Joueur
-        self.player = Player()
+        self.player = Player(tile_size=self.tile_size)
         self.all_sprites.add(self.player)
 
-        # Boutons
         self.button_width = 120
         self.button_height = 40
         self.prev_button = pygame.Rect(10, screen_height - 50, self.button_width, self.button_height)
@@ -39,6 +38,29 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     self.player.manual_control = not self.player.manual_control
 
+                # AJOUT : Gérer le déplacement si le mode manuel est actif
+                if self.player.manual_control:
+                    moved = False
+                    if event.key == pygame.K_z and self.player.position >= self.player.map_width:
+                        self.player.position -= self.player.map_width
+                        moved = True
+                    elif event.key == pygame.K_s and self.player.position < self.player.map_width * (self.player.map_width - 1):
+                        self.player.position += self.player.map_width
+                        moved = True
+                    elif event.key == pygame.K_q and self.player.position % self.player.map_width != 0:
+                        self.player.position -= 1
+                        moved = True
+                    elif event.key == pygame.K_d and self.player.position % self.player.map_width != self.player.map_width - 1:
+                        self.player.position += 1
+                        moved = True
+                    
+                    # Si le joueur a bougé, on met à jour sa position graphique (le rect)
+                    if moved:
+                        current_col = self.player.position % self.player.map_width
+                        current_row = self.player.position // self.player.map_width
+                        self.player.rect.topleft = (current_col * self.player.tile_size, current_row * self.player.tile_size)
+                        print(f"Position du joueur : {current_col}, {current_row}")
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.prev_button.collidepoint(mouse_pos):
@@ -48,13 +70,11 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
-        self.player.update()
 
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
 
-        # Dessiner boutons
         pygame.draw.rect(self.screen, (100, 100, 255), self.prev_button)
         pygame.draw.rect(self.screen, (100, 100, 255), self.next_button)
         self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
