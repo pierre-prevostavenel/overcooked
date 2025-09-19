@@ -2,7 +2,7 @@
 
 Projet réalisé par :
 - Wissam EL HAGE
--Jean-Matthieu COLIBEAU
+- Jean-Matthieu COLIBEAU
 - Enzo LARAMY
 - Pierre PREVOST--AVENEL
 
