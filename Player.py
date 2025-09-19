@@ -11,6 +11,10 @@ class Player(pygame.sprite.Sprite):
         self.position = y * self.map_width + x
         self.manual_control = False
 
+        # Ajout d'un compteur pour le délai de mouvement
+        self.move_cooldown = 0
+        self.move_timer = 20  # Le joueur se déplace tous les 60 appels
+
         # Chargement de l'image et création du rect pour le dessin
         try:
             # Charge l'image et la met à l'échelle de la tuile
@@ -28,10 +32,19 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         """Met à jour la position du joueur (logique de grille)."""
+        self.move_cooldown += 1
+
+        # Si le compteur n'a pas atteint la limite, on ne fait rien
+        if self.move_cooldown < self.move_timer:
+            return
+        
+        # Réinitialisation du compteur
+        self.move_cooldown = 0
+
+        moved = False
         # Si le joueur est contrôlé par les touches
         if self.manual_control:
             keys = pygame.key.get_pressed()
-            moved = False
             if keys[pygame.K_z] and self.position >= self.map_width:
                 self.position -= self.map_width
                 moved = True
@@ -64,13 +77,16 @@ class Player(pygame.sprite.Sprite):
             if mouvements_possibles:
                 mouvement = random.choice(mouvements_possibles)
                 self.position += mouvement
+                moved = True
         
         # Met à jour la position en pixels (le rect) à partir de la position en grille
-        current_col = self.position % self.map_width
-        current_row = self.position // self.map_width
-        self.rect.topleft = (current_col * self.tile_size, current_row * self.tile_size)
+        # seulement si un mouvement a eu lieu.
+        if moved:
+            current_col = self.position % self.map_width
+            current_row = self.position // self.map_width
+            self.rect.topleft = (current_col * self.tile_size, current_row * self.tile_size)
 
-        print(f"Position du joueur : {current_col}, {current_row}")
+            print(f"Position du joueur : {current_col}, {current_row}")
 
     def draw(self, surface):
         """Dessine le joueur sur la surface donnée."""
