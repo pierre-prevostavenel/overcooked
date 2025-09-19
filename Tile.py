@@ -1,36 +1,44 @@
 import pygame
+from MySprite import MySprite
 
-class Tile:
-    # Load sprites once as class variables
-    FLOOR_IMG = pygame.image.load("floor.png").convert_alpha()
-    COUNTER_IMG = pygame.image.load("counter.png").convert_alpha()
+# Dictionnaire pour mapper les types de tuiles vers des chemins d'images
+TILE_IMAGES = {
+    "whitefloor": "assets/white_tile.png",
+    "blackfloor": "assets/black_tile.png",
+    "gas_station": "assets/gas.png"
+}
 
-    def __init__(self, row, col, tile_type="floor"):
+class Tile(MySprite):
+    def __init__(self, row, col, tile_type="floor", tile_size=50):
+        """
+        row, col : position de la tuile dans la grille
+        tile_type : type de la tuile ("floor", "counter", "wall", etc.)
+        tile_size : taille de la tuile en pixels (carré)
+        """
         self.row = row
         self.col = col
         self.tile_type = tile_type
-        self.occupied = False
-        self.sprite = self.get_sprite_for_type(tile_type)
+        self.tile_size = tile_size
 
-    def get_sprite_for_type(self, tile_type):
-        if tile_type == "floor":
-            return Tile.FLOOR_IMG
-        elif tile_type == "counter":
-            return Tile.COUNTER_IMG
-        else:
-            return None
+        # Calcule la position en pixels pour pygame.Rect
+        rect = (col * tile_size, row * tile_size, tile_size, tile_size)
 
-    def set_type(self, tile_type):
-        self.tile_type = tile_type
-        self.sprite = self.get_sprite_for_type(tile_type)
+        # Choisit le chemin de l'image selon le type
+        image_path = TILE_IMAGES.get(tile_type, None)
 
-    def position(self, tile_size):
-        return (self.col * tile_size, self.row * tile_size)
+        # Appelle le constructeur de MySprite
+        super().__init__(rect, image_path)
 
-    def draw(self, surface, tile_size):
-        x, y = self.position(tile_size)
-        if self.sprite:
-            surface.blit(self.sprite, (x, y))
-        else:
-            pygame.draw.rect(surface, (200,200,200), (x, y, tile_size, tile_size))
-            pygame.draw.rect(surface, (0,0,0), (x, y, tile_size, tile_size), 1)
+    def set_type(self, new_type):
+        """Change le type de la tuile et met à jour l'image."""
+        self.tile_type = new_type
+        image_path = TILE_IMAGES.get(new_type, None)
+        self.image = self.load_image(image_path, fallback_color=(200, 200, 200))
+
+    def draw(self, surface, tile_size=None):
+        """Dessine la tuile sur la surface donnée."""
+        if tile_size:
+            # Ajuste l'image si la taille de dessin change
+            self.image = pygame.transform.scale(self.image, (tile_size, tile_size))
+            self.rect.size = (tile_size, tile_size)
+        surface.blit(self.image, self.rect.topleft)
