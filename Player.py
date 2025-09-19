@@ -6,9 +6,11 @@ class Player:
         self.largeur_map = 10
         self.position = x * self.largeur_map + y
 
-    def update(self, keys):
+    def update(self, manual_control=True):
         # Si le joueur est contrôlé par les touches
-        if True:
+        if manual_control:
+            keys = pygame.key.get_pressed()
+
             if keys[pygame.K_z] and self.position >= self.largeur_map:
                 self.position -= self.largeur_map
 
