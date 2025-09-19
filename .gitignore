@@ -1,3 +1,51 @@
-# Godot 4+ specific ignores
-.godot/
-/android/
+# --- Godot ---
+# Fichiers de configuration utilisateur (ne doivent pas être partagés)
+.editor_settings-3.tres
+.editor_settings-4.tres
+
+# Caches de l’éditeur
+.import/
+.export/
+
+# Fichiers de build générés par Godot
+*.translation
+*.import
+*.tmp
+*.flags
+*.cache
+
+# Fichiers temporaires de débogage
+*.log
+*.cfg
+*.ini
+
+# --- OS ---
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# --- IDE / Outils externes ---
+# VSCode
+.vscode/
+# JetBrains (Rider, CLion…)
+.idea/
+# Autres éditeurs
+*.swp
+*.swo
+
+# Godot cache et fichiers temporaires
+.godot/imported/
+.godot/shader_cache/
+.godot/uid_cache.bin
+.godot/editor/filesystem_cache*
+.godot/.gdignore
+
+
