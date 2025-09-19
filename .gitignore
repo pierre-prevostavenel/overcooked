@@ -1,30 +1,3 @@
-# --- Godot ---
-# Fichiers de configuration utilisateur (ne doivent pas être partagés)
-.editor_settings-3.tres
-.editor_settings-4.tres
-
-# Caches et préférences locales
-.import/
-.export/
-.godot/editor/
-.godot/imported/
-.godot/shader_cache/
-.godot/uid_cache.bin
-.godot/editor/filesystem_cache*
-.godot/.gdignore
-
-# Fichiers de build générés par Godot
-*.translation
-*.import
-*.tmp
-*.flags
-*.cache
-
-# Fichiers temporaires de débogage
-*.log
-*.cfg
-*.ini
-
 # --- OS ---
 # macOS
 .DS_Store
