@@ -3,9 +3,15 @@
 .editor_settings-3.tres
 .editor_settings-4.tres
 
-# Caches de l’éditeur
+# Caches et préférences locales
 .import/
 .export/
+.godot/editor/
+.godot/imported/
+.godot/shader_cache/
+.godot/uid_cache.bin
+.godot/editor/filesystem_cache*
+.godot/.gdignore
 
 # Fichiers de build générés par Godot
 *.translation
@@ -40,12 +46,3 @@ Desktop.ini
 # Autres éditeurs
 *.swp
 *.swo
-
-# Godot cache et fichiers temporaires
-.godot/imported/
-.godot/shader_cache/
-.godot/uid_cache.bin
-.godot/editor/filesystem_cache*
-.godot/.gdignore
-
-
