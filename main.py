@@ -11,6 +11,7 @@ clock = pygame.time.Clock()
 player = Player()
 
 all_sprites = LayeredUpdates()
+# AJOUTER SPRITE ICI
 running = True
 while running:
     for event in pygame.event.get():
