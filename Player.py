@@ -45,3 +45,4 @@ class Player:
             if mouvements_possibles:
                 mouvement = random.choice(mouvements_possibles)
                 self.position += mouvement
+
