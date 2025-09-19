@@ -1,5 +1,6 @@
 from pygame.sprite import Sprite
-
+import pygame
+import os
 class MySprite(Sprite):
     def __init__(self, rect, image_path=None, fallback_color=(255, 0, 0), layer=0):
         super().__init__()
