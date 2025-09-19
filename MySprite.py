@@ -19,3 +19,9 @@ class MySprite(Sprite):
         surface = pygame.Surface(self.rect.size)
         surface.fill(fallback_color)
         return surface
+    
+def __str__(self):
+    return (f"<MySprite rect={self.rect} "
+            f"layer={self._layer} "
+            f"image_path={'None' if not hasattr(self, 'image') else getattr(self, 'image_path', 'Unknown')} "
+            f"fallback_color={self.fallback_color if hasattr(self, 'fallback_color') else 'N/A'}>")
