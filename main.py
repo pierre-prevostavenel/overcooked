@@ -9,6 +9,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 
 all_sprites = LayeredUpdates()
+# AJOUTER SPRITE ICI
 running = True
 while running:
     for event in pygame.event.get():
