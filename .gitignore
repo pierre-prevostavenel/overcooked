@@ -19,3 +19,6 @@ Desktop.ini
 # Autres éditeurs
 *.swp
 *.swo
+
+*.pyc
+__pycache__
