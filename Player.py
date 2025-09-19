@@ -1,8 +1,9 @@
 import pygame
 import random
 
-class Player:
+class Player(pygame.sprite.Sprite):
     def __init__(self, x=0, y=0, tile_size=50):
+        super().__init__()
         self.map_width = 10
         self.tile_size = tile_size
         
