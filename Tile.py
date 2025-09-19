@@ -28,3 +28,6 @@ class Tile(MySprite):
             self.image = pygame.transform.scale(self.image, (tile_size, tile_size))
             self.rect.size = (tile_size, tile_size)
         surface.blit(self.image, self.rect.topleft)
+
+    
+        

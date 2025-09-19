@@ -48,3 +48,26 @@ class Maps:
 
     def num_levels(self):
         return len(self.levels)
+    
+    def get_nearest(self, posx, posy, tile_type, level_index=None):
+        """
+        Retourne la tile du type 'tile_type' la plus proche de (posx, posy).
+        level_index : si None, prend la map actuelle.
+        """
+        if level_index is None:
+            level_index = self.current_level_index if hasattr(self, 'current_level_index') else 0
+
+        tiles_layer = self.get_level(level_index)  # LayeredUpdates
+        nearest_tile = None
+        min_dist = float('inf')
+
+        for tile in tiles_layer:
+            if getattr(tile, "tile_type", None) == tile_type:
+                # Calcul de la distance euclidienne entre le centre de la tile et posx, posy
+                tile_center = tile.rect.center
+                dist = math.hypot(tile_center[0] - posx, tile_center[1] - posy)
+                if dist < min_dist:
+                    min_dist = dist
+                    nearest_tile = tile
+
+        return nearest_tile
