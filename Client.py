@@ -1,4 +1,6 @@
 from MySprite import MySprite
+import pygame 
+
 class Client(MySprite):
     def __init__(self, posX, posY, image_path=None, fallback_color=(255, 0, 0), layer=0, patience_meter=3600):
         rect = pygame.Rect(posX, posY, 32, 32)  # ou une autre taille selon ton sprite

@@ -71,10 +71,10 @@ class Game:
                     self.next_level()
 
     def update(self):
-        if randint(1, 10) == 5:
-            client = Client(posX=0, posY=0)  # Remplace les valeurs selon ton jeu
-            print("Un client vient dans le restaurant ! " + client.__str__())
-            self.all_sprites.add(client)
+        #if randint(1, 10) == 5:
+        #    client = Client(posX=0, posY=0)  
+        #    print("Un client vient dans le restaurant ! " + client.__str__())
+        #    self.all_sprites.add(client)
         self.all_sprites.update()
 
     def draw(self):
