@@ -18,7 +18,7 @@ class Game:
         self.tile_size = screen_width // 10
         self.maps = Maps(tile_size=self.tile_size)
         self.current_level_index = 0
-        self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
+        self.all_sprites = self.maps.get_level(self.current_level_index)
 
         self.player = Player(tile_size=self.tile_size)
         self.all_sprites.add(self.player)
@@ -91,13 +91,13 @@ class Game:
     def next_level(self):
         if self.current_level_index + 1 < self.maps.num_levels():
             self.current_level_index += 1
-            self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
+            self.all_sprites = self.maps.get_level(self.current_level_index)
             self.all_sprites.add(self.player)
 
     def previous_level(self):
         if self.current_level_index - 1 >= 0:
             self.current_level_index -= 1
-            self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
+            self.all_sprites = self.maps.get_level(self.current_level_index)
             self.all_sprites.add(self.player)
 
     def run(self):

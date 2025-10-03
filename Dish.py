@@ -1,5 +1,6 @@
+from Ingredient import Ingredient
 class Dish:
-    def __init__(self, name, ingredients):
+    def __init__(self, name, ingredients : list[Ingredient]):
         self.name = name
         self.ingredients = ingredients
 
