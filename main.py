@@ -26,7 +26,7 @@ class Game:
 
         self.orders = []
 
-        self.player = Player(tile_size=self.tile_size)
+        self.player = Player(self.maps,tile_size=self.tile_size)
         self.all_sprites.add(self.player)
 
         self.button_width = 120
