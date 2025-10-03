@@ -2,6 +2,8 @@
 from Action import Action
 
 class Cook(Action):
+    def __init__(self, targets):
+        super().__init__(targets)
     def __repr__(self):
         return f"Cook({', '.join(str(t) for t in self.targets)})"
 
