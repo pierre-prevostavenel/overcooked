@@ -82,7 +82,7 @@ class Game:
     def updateOrders(self):
         for o in self.orders[:]:  
             if not o.update():
-                self.orders.remove(o)
+                player.rmv_order(o)
                 self.gameState.fail_order()
                 print("Commande raté :/ ! " + o.__str__())
                 
@@ -90,7 +90,7 @@ class Game:
         if randint(1, 1000) <= 1:
             order = Order(30) #possible de chager le temps restant pour une commande
             print("Nouvelle commandes ! " + order.__str__())
-            self.orders.append(order)
+            player.add_order(order)
             print(f"Total commande : {len(self.orders)}")
         
         

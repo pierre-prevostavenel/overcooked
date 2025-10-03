@@ -5,7 +5,7 @@ from ingredients_list import *
 
 from Ingredient import Ingredient
 class Dish:
-    dishes = [Assemble([Chop(Lettuce), Chop(Tomato)]),]
+    dishes = [Assemble(Chop(Lettuce), Chop(Tomato)),]
 
     def __init__(self, action):
         self.action = action
