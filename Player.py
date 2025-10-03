@@ -7,7 +7,10 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.map_width = 10
         self.tile_size = tile_size
-        
+        self.maps = maps
+        self.x =x
+        self.y = y
+        self.orders = []
         self.position = y * self.map_width + x
         self.manual_control = False
 
@@ -72,32 +75,19 @@ class Player(pygame.sprite.Sprite):
                 naction = action.target
                 return [action] + self.see(naction)
 
+    def rmv_order(self,o):
+        self.orders.remove(o)
+    
+    def add_order(self,o):
+        self.orders.append(o)
 
-        
-        self.move_cooldown = 0
-        moved = False
-
-        # Mouvement automatique aléatoire (le bloc 'if self.manual_control' a été retiré)
-        mouvements_possibles = []
-        if self.position >= self.map_width:
-            mouvements_possibles.append(-self.map_width)
-        if self.position < self.map_width * (self.map_width - 1):
-            mouvements_possibles.append(self.map_width)
-        if self.position % self.map_width != 0:
-            mouvements_possibles.append(-1)
-        if self.position % self.map_width != self.map_width - 1:
-            mouvements_possibles.append(1)
-
-        if mouvements_possibles:
-            mouvement = random.choice(mouvements_possibles)
-            self.position += mouvement
-            moved = True
-        
-        if moved:
-            current_col = self.position % self.map_width
-            current_row = self.position // self.map_width
-            self.rect.topleft = (current_col * self.tile_size, current_row * self.tile_size)
-            print(f"Position du joueur : {current_col}, {current_row}")        
+    def go_to(self, target: str, level_index):
+        self.path = self.maps.get_path(self.x, self.y, target, level_index)
+        if self.path is None:
+            print("Erreur : chemin non trouvé")
+        else:
+            self.state = "WALKING"
+            self.path = self.maps.get_path(self.x, self.y, target, level_index)
 
     def interact(self, target: str, time: int):
         """Interagit avec la target pendant un nombre de ticks défini"""
@@ -121,4 +111,4 @@ class Player(pygame.sprite.Sprite):
 
                 if chained_action[0] == Chop:
                     self.state = "CHOPPING"
-                
+        
