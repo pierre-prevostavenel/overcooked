@@ -1,6 +1,30 @@
 import pygame
+import heapq
+import math
 from pygame.sprite import LayeredUpdates
 from Tile import Tile
+
+class Node:
+    """
+    Une classe pour représenter un nœud dans l'algorithme A*.
+    Chaque nœud représente une case de la carte.
+    """
+    def __init__(self, parent=None, position=None):
+        self.parent = parent
+        self.position = position  # (x, y)
+
+        self.g = 0  # Coût du départ à ce nœud
+        self.h = 0  # Coût estimé de ce nœud à la fin (heuristique)
+        self.f = 0  # Coût total (g + h)
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+    def __lt__(self, other):
+        return self.f < other.f
+
+    def __gt__(self, other):
+        return self.f > other.f
 
 class Maps:
     """Classe qui contient toutes les maps et gère l'accès par niveau."""
@@ -49,25 +73,103 @@ class Maps:
     def num_levels(self):
         return len(self.levels)
     
-    def get_nearest(self, posx, posy, tile_type, level_index=None):
+    def get_nearest(self, from_grid_x, from_grid_y, tile_type, level_index=None):
         """
-        Retourne la tile du type 'tile_type' la plus proche de (posx, posy).
-        level_index : si None, prend la map actuelle.
+        Retourne les coordonnées de la grille (col, row) de la tuile du type 'tile_type' la plus proche 
+        de la position de grille (from_grid_x, from_grid_y).
+        Renvoie un tuple (x, y) ou None si aucune tuile de ce type n'est trouvée.
         """
         if level_index is None:
             level_index = self.current_level_index if hasattr(self, 'current_level_index') else 0
 
-        tiles_layer = self.get_level(level_index)  # LayeredUpdates
-        nearest_tile = None
+        map_grid = self.levels[level_index]
+        map_height = len(map_grid)
+        map_width = len(map_grid[0])
+        
+        nearest_coords = None
         min_dist = float('inf')
 
-        for tile in tiles_layer:
-            if getattr(tile, "tile_type", None) == tile_type:
-                # Calcul de la distance euclidienne entre le centre de la tile et posx, posy
-                tile_center = tile.rect.center
-                dist = math.hypot(tile_center[0] - posx, tile_center[1] - posy)
-                if dist < min_dist:
-                    min_dist = dist
-                    nearest_tile = tile
+        # On parcourt directement la structure de données de la carte (la grille)
+        for r in range(map_height):
+            for c in range(map_width):
+                if map_grid[r][c] == tile_type:
+                    # Calcul de la distance euclidienne sur la grille
+                    dist = math.hypot(c - from_grid_x, r - from_grid_y)
+                    if dist < min_dist:
+                        min_dist = dist
+                        # On stocke les coordonnées de la grille (colonne, ligne)
+                        nearest_coords = (c, r)
 
-        return nearest_tile
+        return nearest_coords
+
+    def get_path(self, from_x, from_y, tile, map_index):
+        """
+        Calcule le chemin le plus court en utilisant l'algorithme A*.
+        Renvoie une liste de tuples (x, y) représentant les coordonnées des cases du chemin.
+        Renvoie None si aucun chemin n'est trouvé.
+        Les coordonnées sont en indices de grille (colonne, ligne).
+        """
+        map_grid = self.levels[map_index]
+        map_height = len(map_grid)
+        map_width = len(map_grid[0])
+
+        # Création des nœuds de départ et d'arrivée
+        start_node = Node(None, (from_x, from_y))
+        end_node = Node(None, self.get_nearest(from_x, from_y, tile, map_index))
+
+        open_list = []
+        closed_set = set()
+
+        # Le tas (heap) permet de toujours récupérer le nœud avec le plus petit f de manière efficace
+        heapq.heapify(open_list)
+        heapq.heappush(open_list, start_node)
+
+        # Mouvements possibles (4 directions : haut, bas, gauche, droite)
+        movements = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+
+        while len(open_list) > 0:
+            current_node = heapq.heappop(open_list)
+            closed_set.add(current_node.position)
+
+            # Chemin trouvé, on le reconstruit en remontant les parents
+            if current_node == end_node:
+                path = []
+                current = current_node
+                while current is not None:
+                    path.append(current.position)
+                    current = current.parent
+                return path[::-1][1:]  # On retourne le chemin dans le bon sens (départ -> arrivée)
+
+            # Exploration des voisins
+            for move in movements:
+                node_position = (current_node.position[0] + move[0], current_node.position[1] + move[1])
+                node_x, node_y = node_position
+
+                # Vérifier si le voisin est dans les limites de la carte
+                if not (0 <= node_x < map_width and 0 <= node_y < map_height):
+                    continue
+
+                # MODIFICATION : Autoriser la destination même si c'est un obstacle
+                # On vérifie si la case est un obstacle SEULEMENT si ce n'est PAS la destination finale.
+                if node_position != end_node.position and "floor" not in map_grid[node_y][node_x]:
+                    continue
+                
+                # Le voisin a déjà été exploré
+                if node_position in closed_set:
+                    continue
+
+                new_node = Node(current_node, node_position)
+                new_node.g = current_node.g + 1
+                # Heuristique: Distance de Manhattan (simple et efficace pour les grilles)
+                new_node.h = abs(node_x - end_node.position[0]) + abs(node_y - end_node.position[1])
+                new_node.f = new_node.g + new_node.h
+
+                # Si le voisin est déjà dans la liste ouverte avec un meilleur chemin, on ne fait rien
+                for open_node in open_list:
+                    if new_node == open_node and new_node.g >= open_node.g:
+                        break
+                else:
+                    # Sinon, on l'ajoute à la liste ouverte
+                    heapq.heappush(open_list, new_node)
+
+        return None  # Aucun chemin trouvé

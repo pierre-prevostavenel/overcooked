@@ -20,7 +20,7 @@ class Game:
         self.current_level_index = 0
         self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
 
-        self.player = Player(tile_size=self.tile_size)
+        self.player = Player(self.maps,tile_size=self.tile_size)
         self.all_sprites.add(self.player)
 
         self.button_width = 120
