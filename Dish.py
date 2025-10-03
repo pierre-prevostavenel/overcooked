@@ -1,21 +1,21 @@
-from Ingredient import Ingredient
 import random
+from actions_list import *
+from ingredients_list import *
+
 
 from Ingredient import Ingredient
 class Dish:
-    dishes = [("Salad", [Ingredient("Chopped Lettuce"), Ingredient("Chopped Tomato")])]
+    dishes = [Assemble([Chop(Lettuce), Chop(Tomato)]),]
 
-    def __init__(self, name, ingredients : list[Ingredient]):
-        self.name = name
-        self.ingredients = ingredients
+    def __init__(self, action):
+        self.action = action
 
     def __repr__(self):
-        return f"{self.name}: {self.ingredients}"
+        return f"Dish({self.action})"
 
-    @staticmethod
-    def random_dish():
-        name, ingredients = random.choice(Dish.dishes)
-        return Dish(name, ingredients)
+    def random_dish(cls):
+        import random
+        return Dish(random.choice(cls.dishes))
 
     #TODO une fois que l'archi ingrédient est fini, objectif = donner à quel point les deux plats sont simmilaires
     @staticmethod
