@@ -6,6 +6,7 @@ from Maps import Maps
 from random import randint
 from Client import Client
 from Order import Order
+from GameState import GameState
 
 class Game:
     def __init__(self, screen_width=720, screen_height=720):
@@ -20,6 +21,8 @@ class Game:
         self.maps = Maps(tile_size=self.tile_size)
         self.current_level_index = 0
         self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
+
+        self.gameState = GameState()
 
         self.orders = []
 
@@ -75,14 +78,20 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
+
+    def updateOrders(self):
         for o in self.orders[:]:  
             if not o.update():
                 self.orders.remove(o)
-
-        if randint(1, 10) == 5:
-            order = Order() #possible de chager le temps restant pour une commande
+                self.gameState.fail_order()
+                print("Commande raté :/ ! " + o.__str__())
+                
+        #TODO voir pour faire "scale" la difficultée
+        if randint(1, 100) <= 1:
+            order = Order(30) #possible de chager le temps restant pour une commande
             print("Nouvelle commandes ! " + order.__str__())
             self.orders.append(order)
+            print(f"Total commande : {len(self.orders)}")
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -110,6 +119,7 @@ class Game:
     def run(self):
         while self.running:
             self.handle_events()
+            self.updateOrders()
             self.update()
             self.draw()
             self.clock.tick(60)

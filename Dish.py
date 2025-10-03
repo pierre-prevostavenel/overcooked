@@ -17,5 +17,6 @@ class Dish:
         return Dish(name, ingredients)
 
     #TODO une fois que l'archi ingrédient est fini, objectif = donner à quel point les deux plats sont simmilaires
+    @staticmethod
     def equal(dish1,dish2):
         return False
