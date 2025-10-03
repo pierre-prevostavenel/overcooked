@@ -3,6 +3,7 @@ from actions_list import *
 from ingredients_list import *
 
 
+from Ingredient import Ingredient
 class Dish:
     dishes = [Assemble([Chop(Lettuce), Chop(Tomato)]),]
 
@@ -17,5 +18,6 @@ class Dish:
         return Dish(random.choice(cls.dishes))
 
     #TODO une fois que l'archi ingrédient est fini, objectif = donner à quel point les deux plats sont simmilaires
+    @staticmethod
     def equal(dish1,dish2):
         return False
