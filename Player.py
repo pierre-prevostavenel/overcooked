@@ -3,7 +3,7 @@ import pygame
 import random
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, maps, x=4, y=4, tile_size=50):
+    def __init__(self, maps, x=1, y=2, tile_size=50):
         super().__init__()
         self.maps = maps
         self.map_width = 10
@@ -30,8 +30,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         # Toutes les 1/2s (30 ticks)
         self.move_timer += 1
-        if self.move_timer == 30:
-            self.move_timer = 0
+        self.move_timer %=30
         if self.move_timer == 0:
             match self.state:
                 case "WALKING":
@@ -56,6 +55,10 @@ class Player(pygame.sprite.Sprite):
         else:
             self.state = "WALKING"
             self.path = self.maps.get_path(self.x, self.y, target, level_index)
+
+    def interact(self, target: str, time: int):
+        """Interagit avec la target pendant un nombre de ticks défini"""
+        pass
 
     def draw(self, surface):
         """Dessine le joueur sur la surface donnée."""
