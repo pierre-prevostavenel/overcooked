@@ -5,8 +5,24 @@ class Tile(MySprite):
     TILE_IMAGES = {
         "whitefloor": "assets/white_tile.png",
         "blackfloor": "assets/black_tile.png",
-        "gas_station": "assets/gas.png"
-    }
+        "gas_station": "assets/gas.png",
+        "floor": "assets/floor.png",
+        "white_sink": "assets/white_sink.png",
+        "white_sink1": "assets/white_sink1.png",
+        "table": "assets/table.png",
+        "fridge": "assets/fridge.png",
+        "gas1": "assets/gas1.png",
+        "gas2": "assets/gas2.png",
+        "gas3": "assets/gas3.png",
+        "player": "assets/player.png",
+        "trash1": "assets/trash1.png",
+        "trash2": "assets/trash2.png",
+        "trash3": "assets/trash3.png",
+        "workbench": "assets/workbench.png",
+        "workbench2": "assets/workbench2.png",
+        "workbench3": "assets/workbench3.png",
+        "workbench4": "assets/workbench4.png",
+}
 
     def __init__(self, row, col, tile_type="whitefloor", tile_size=50):
         self.row = row

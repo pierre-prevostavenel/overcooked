@@ -36,9 +36,18 @@ class Maps:
     def _load_maps(self):
         """Charge ou définit toutes les maps ici."""
         # Exemple Map 1
-        map1 = [["whitefloor"]*10 for _ in range(10)]
-        map1[2][2] = "blackfloor"
-        map1[4][1] = "gas_station"
+        map1 = [
+            ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
+            ["workbench", "table",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "table",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",      "floor",     "floor",    "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "gas_station","floor",    "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",    "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "trash1",    "workbench","trash2",     "floor",     "floor",     "workbench"],
+            ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
+        ]
 
         # Exemple Map 2
         map2 = [["blackfloor"]*10 for _ in range(10)]
@@ -48,27 +57,24 @@ class Maps:
         self.levels.append(map1)
         self.levels.append(map2)
 
-    def get_level(self, index, add_random_tiles=False, num_random=5):
+    def get_level(self, index):
         """Retourne la map demandée sous forme de LayeredUpdates de tiles."""
         grid_data = self.levels[index]
         tiles = LayeredUpdates()
         for r, row in enumerate(grid_data):
             for c, tile_type in enumerate(row):
-                tile = Tile(r, c, tile_type, self.tile_size)
-                tiles.add(tile)
-
-        if add_random_tiles:
-            from random import choice, randint
-            positions = set()
-            while len(positions) < num_random:
-                r = randint(0, len(grid_data)-1)
-                c = randint(0, len(grid_data[0])-1)
-                if (r,c) not in positions:
-                    positions.add((r,c))
-                    tile_type = choice(list(Tile.TILE_IMAGES.keys()))
-                    tiles.add(Tile(r, c, tile_type, self.tile_size))
+                # Toujours créer un floor en dessous
+                if tile_type != "floor" and tile_type != "blackfloor":
+                    floor_tile = Tile(r, c, "floor", self.tile_size)
+                    tiles.add(floor_tile, layer=0)
+                    tile = Tile(r, c, tile_type, self.tile_size)
+                    tiles.add(tile, layer=1)
+                else:
+                    tile = Tile(r, c, tile_type, self.tile_size)
+                    tiles.add(tile, layer=0)
 
         return tiles
+
 
     def num_levels(self):
         return len(self.levels)
