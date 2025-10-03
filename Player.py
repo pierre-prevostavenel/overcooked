@@ -71,7 +71,15 @@ class Player(pygame.sprite.Sprite):
             self.rect.topleft = (current_col * self.tile_size, current_row * self.tile_size)
             print(f"Position du joueur : {current_col}, {current_row}")
 
-
+        def see(self, action):
+        
+        Assemble([Chop(Lettuce), Chop(Tomato)])
+        if(action.super.name == "ingredient"):
+            return [action]
+        else:
+            next_
+            return self.see(next_action).append(action)
+         
         
         
 
