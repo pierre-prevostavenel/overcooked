@@ -17,11 +17,11 @@ class Maps:
             ["workbench", "table",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "table",     "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",      "floor",     "floor",    "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "gas_station","floor",    "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
+            ["workbench", "gas_station","floor",    "floor",    "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",    "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "trash1",    "workbench","trash2",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "trash1",     "workbench",    "workbench","trash2",     "floor",     "floor",     "workbench"],
             ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
         ]
 
