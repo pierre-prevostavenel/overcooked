@@ -49,18 +49,25 @@ class Player(pygame.sprite.Sprite):
                         print(f"self.path: {self.path}")
                 case "IDLE":
                     print("idle player")
+        if len(self.orders)>0 :
+            print(self.orders[0])
+            print(self.orders[0].desired_dish)
+            
+            print(self.see(self.orders[0].desired_dish.ingredients))
 
     def see(self, action):      
-        if(action.super.name == "ingredient"):
+        if(action.get_super_name() == "Ingredient"):
             return [action]
         else:
-            if action.name == "Assemble":
+            if action.__class__.__name__ == "Assemble":
+                
                 naction1 = action.target[0]
+                print(naction1)
                 naction2 = action.target[1]
                 return [self.see(naction1), self.see(naction2)]
             else :
                 naction = action.target
-                return self.see(naction).append(action)    
+                return [action] + self.see(naction)
 
     def rmv_order(self,o):
         self.orders.remove(o)
