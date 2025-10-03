@@ -1,30 +1,71 @@
 from Ingredient import Ingredient
 
-# Ingrédients
-fries = Ingredient("Fries")
-cooked_potato = Ingredient("Cooked Potato")
-chopped_potato = Ingredient("Chopped Potato")
-potato = Ingredient("Potato")
+# Potato ----------------------------------------------
+class Potato(Ingredient):
+    def __init__(self):
+        super().__init__("Potato")
 
-chopped_tomato = Ingredient("Chopped Tomato")
-tomato = Ingredient("Tomato")
+    def chop(self):
+        return ChoppedPotato()
 
-chopped_lettuce = Ingredient("Chopped Lettuce")
-lettuce = Ingredient("Lettuce")
+    def cook(self):
+        return CookedPotato()
+    
+class CookedPotato(Ingredient):
+    def __init__(self):
+        super().__init__("Cooked Potato")
 
-steak_cooked = Ingredient("Cooked Steak")
-steak_raw = Ingredient("Steak")
 
-# Liaisons fixes (prédefinies)
-potato.evolutions = {"chop": chopped_potato, "cook": cooked_potato}
-chopped_potato.evolutions = {"fry": fries}
+class ChoppedPotato(Ingredient):
+    def __init__(self):
+        super().__init__("Chopped Potato")
 
-tomato.evolutions = {"chop": chopped_tomato}
-lettuce.evolutions = {"chop": chopped_lettuce}
+    def fry(self):
+        return Fries()
+    
 
-steak_raw.evolutions = {"cook": steak_cooked}
+class Fries(Ingredient):
+    def __init__(self):
+        super().__init__("Fries")
 
-# Création des liens précédents
-for parent in [potato, chopped_potato, tomato, lettuce, steak_raw]:
-    for action, child in parent.evolutions.items():
-        child.previous = (parent, action)
+
+# Tomato ----------------------------------------------
+class Tomato(Ingredient):
+    def __init__(self):
+        super().__init__("Tomato")
+
+    def chop(self):
+        return ChoppedTomato()
+
+
+class ChoppedTomato(Ingredient):
+    def __init__(self):
+        super().__init__("Chopped Tomato")
+
+
+# Lettuce ----------------------------------------------
+class Lettuce(Ingredient):
+    def __init__(self):
+        super().__init__("Lettuce")
+
+    def chop(self):
+        return ChoppedLettuce()
+
+
+class ChoppedLettuce(Ingredient):
+    def __init__(self):
+        super().__init__("Chopped Lettuce")
+
+
+# Steak ----------------------------------------------
+class Steak(Ingredient):
+    def __init__(self):
+        super().__init__("Steak")
+
+    def cook(self):
+        return CookedSteak()
+
+
+class CookedSteak(Ingredient):
+    def __init__(self):
+        super().__init__("Cooked Steak")

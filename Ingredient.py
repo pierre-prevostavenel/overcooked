@@ -1,14 +1,21 @@
-class Ingredient:
-    def __init__(self, name, next_stages=None):
-        self.name = name
-        self.next_stages = next_stages or [] 
+from abc import ABC, abstractmethod
 
-    def evolve(self, next_ingredient):
-        if next_ingredient in self.next_stages:
-            return next_ingredient
-        else:
-            print(f"Cannot evolve {self} to {next_ingredient}!")
-            return self
+class Ingredient(ABC):
+    def __init__(self, name):
+        self.name = name
+        self.previous = None  # (Ingredient, action)
+
+    def chop(self):
+        return False
+
+    def cook(self):
+        return False
+
+    def fry(self):
+        return False
 
     def __repr__(self):
         return self.name
+    
+
+
