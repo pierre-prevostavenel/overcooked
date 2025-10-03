@@ -15,13 +15,13 @@ class Maps:
         map1 = [
             ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
             ["workbench", "table",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "table",     "workbench"],
-            ["workbench", "floor",     "gas1",      "floor",     "floor",     "floor",     "gas2",      "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "workbench",  "floor",    "floor",     "floor","workbench",  "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "fridge",    "floor",     "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
-            ["workbench", "floor",     "workbench",  "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "gas3",      "floor",     "floor",     "floor",     "floor",     "trash1",    "trash2",    "workbench"],
-            ["workbench", "floor",     "workbench4", "floor",     "floor",   "floor",     "floor",     "floor",     "floor",     "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",      "floor",     "floor",    "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "gas_station","floor",    "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",    "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "floor",     "floor",     "floor",     "trash1",    "workbench","trash2",     "floor",     "floor",     "workbench"],
             ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
         ]
 
