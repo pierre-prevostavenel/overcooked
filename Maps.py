@@ -14,7 +14,7 @@ class Maps:
         # Exemple Map 1
         map1 = [
             ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
+            ["workbench", "table",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "table",     "workbench"],
             ["workbench", "floor",     "gas1",      "floor",     "floor",     "floor",     "gas2",      "floor",     "floor",     "workbench"],
             ["workbench", "floor",     "workbench",  "floor",    "floor",     "floor","workbench",  "floor",     "floor",     "workbench"],
             ["workbench", "floor",     "fridge",    "floor",     "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
