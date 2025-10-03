@@ -3,7 +3,7 @@ import pygame
 import random
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, maps, x=0, y=0, tile_size=50):
+    def __init__(self, maps, x=4, y=4, tile_size=50):
         super().__init__()
         self.maps = maps
         self.map_width = 10
@@ -49,11 +49,13 @@ class Player(pygame.sprite.Sprite):
                 case "IDLE":
                     print("idle player")
         
-    def go_to(self, target: str):
-        print(f"Appel de go_to {target}")
-        self.state = "WALKING"
-        self.path = self.maps.get_path(self.x, self.y, target, 0)
-        print(f"chemin: {self.path}")
+    def go_to(self, target: str, level_index):
+        self.path = self.maps.get_path(self.x, self.y, target, level_index)
+        if self.path is None:
+            print("Erreur : chemin non trouvé")
+        else:
+            self.state = "WALKING"
+            self.path = self.maps.get_path(self.x, self.y, target, level_index)
 
     def draw(self, surface):
         """Dessine le joueur sur la surface donnée."""

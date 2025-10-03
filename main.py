@@ -117,6 +117,7 @@ class Game:
             self.all_sprites.add(self.player)
 
     def run(self):
+        self.player.go_to("gas_station", self.current_level_index)
         while self.running:
             self.handle_events()
             self.updateOrders()
