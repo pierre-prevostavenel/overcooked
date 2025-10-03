@@ -3,11 +3,7 @@ import pygame
 import random
 
 class Player(pygame.sprite.Sprite):
-<<<<<<< HEAD
-    def __init__(self, x=0, y=0, tile_size=50):
-=======
     def __init__(self, maps, x=1, y=2, tile_size=50):
->>>>>>> dc1c3b68e4d38d288f91064fc7031ebf5be6fce3
         super().__init__()
         self.map_width = 10
         self.tile_size = tile_size
