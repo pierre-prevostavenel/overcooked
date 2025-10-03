@@ -87,11 +87,13 @@ class Game:
                 print("Commande raté :/ ! " + o.__str__())
                 
         #TODO voir pour faire "scale" la difficultée
-        if randint(1, 100) <= 1:
+        if randint(1, 1000) <= 1:
             order = Order(30) #possible de chager le temps restant pour une commande
             print("Nouvelle commandes ! " + order.__str__())
             self.orders.append(order)
             print(f"Total commande : {len(self.orders)}")
+        
+        
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -101,7 +103,7 @@ class Game:
         pygame.draw.rect(self.screen, (100, 100, 255), self.next_button)
         self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
         self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
-
+        Order.draw_orders(self.screen, self.orders, pygame.font.SysFont("arial", 20))
         pygame.display.flip()
 
     def next_level(self):
