@@ -5,6 +5,7 @@ from Player import Player
 from Maps import Maps
 from random import randint
 from Client import Client
+from Order import Order
 
 class Game:
     def __init__(self, screen_width=720, screen_height=720):
@@ -19,6 +20,8 @@ class Game:
         self.maps = Maps(tile_size=self.tile_size)
         self.current_level_index = 0
         self.all_sprites = self.maps.get_level(self.current_level_index, add_random_tiles=True)
+
+        self.orders = []
 
         self.player = Player(tile_size=self.tile_size)
         self.all_sprites.add(self.player)
@@ -71,11 +74,15 @@ class Game:
                     self.next_level()
 
     def update(self):
-        #if randint(1, 10) == 5:
-        #    client = Client(posX=0, posY=0)  
-        #    print("Un client vient dans le restaurant ! " + client.__str__())
-        #    self.all_sprites.add(client)
         self.all_sprites.update()
+        for o in self.orders[:]:  
+            if not o.update():
+                self.orders.remove(o)
+
+        if randint(1, 10) == 5:
+            order = Order() #possible de chager le temps restant pour une commande
+            print("Nouvelle commandes ! " + order.__str__())
+            self.orders.append(order)
 
     def draw(self):
         self.screen.fill((0, 0, 0))
