@@ -16,6 +16,7 @@ class Player(pygame.sprite.Sprite):
 
         self.move_cooldown = 0
         self.move_timer = 20
+        self.interaction_progress = 0
 
         try:
             self.image = pygame.image.load("assets/player.png").convert_alpha()
@@ -49,11 +50,14 @@ class Player(pygame.sprite.Sprite):
                 case "IDLE":
                     print("idle player")
                 case "COOKING":
-                    pass
+                    if self.interact("gas_station") == 0:  # Nombre de ticks restants sur la tâche
+                        self.state = "IDLE"
                 case "FRYING":
-                    pass
+                    if self.interact("gas_station") == 0:
+                        self.state = "IDLE"
                 case "CHOPPING":
-                    pass
+                    if self.interact("workbench") == 0:
+                        self.state = "IDLE"
 
         if len(self.orders)>0 :
             # print(self.orders[0])
