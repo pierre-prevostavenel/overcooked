@@ -6,6 +6,8 @@ from Maps import Maps
 from random import randint
 from Client import Client
 from Order import Order
+from Dish import Dish
+from Ingredient import *
 from GameState import GameState
 
 class Game:
@@ -23,7 +25,8 @@ class Game:
         self.all_sprites = self.maps.get_level(self.current_level_index)
 
         self.gameState = GameState()
-
+        Dish.init("food.json")
+        IngredientGraph.init("food.json")
         self.orders = []
 
         self.player = Player(self.maps,tile_size=self.tile_size)

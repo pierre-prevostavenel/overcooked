@@ -1,93 +1,78 @@
-from abc import ABC, abstractmethod
+import json
 
-class Ingredient(ABC):
-    def __init__(self, name):
+class Ingredient:
+    def __init__(self, name, state="raw", transformations={}):
         self.name = name
-        self.previous = None  # (Ingredient, action)
+        self.state = state
+        self.transformations = transformations  # action -> (new_name, new_state)
 
-    def chop(self):
-        return False
+    def apply_action(self, action):
+        if action in self.transformations:
+            new_name, new_state = self.transformations[action]
+            self.name = new_name
+            self.state = new_state
+        else:
+            print(f"Action '{action}' has no effect on {self}")
+    
+    def get_possible_actions(self):
+        return list(self.transformations.keys())
 
-    def cook(self):
-        return False
+    def as_tuple(self):
+        return (self.name, self.state)
 
-    def fry(self):
-        return False
-
+    def __str__(self):
+        return f"{self.name} ({self.state})"
+    
     def __repr__(self):
-        return self.name
+        return self.__str__()
     
-    def get_super_name(self):
-        return "Ingredient"
-
-# Potato ----------------------------------------------
-class Potato(Ingredient):
-    def __init__(self):
-        super().__init__("Potato")
-
-    def chop(self):
-        return ChoppedPotato()
-
-    def cook(self):
-        return CookedPotato()
+    @staticmethod
+    def equal(i1,i2):
+        return (i1.name == i2.name) and (i1.state == i2.state) 
     
-class CookedPotato(Ingredient):
-    def __init__(self):
-        super().__init__("Cooked Potato")
+    def __hash__(self):
+        return hash((self.name, self.state))
 
+class IngredientGraph:
+    transitions = {}
+    @staticmethod
+    def add(name, state, transformations):
+        src = (name, state)
+        for action, result in transformations.items():
+            new_name = result["name"]
+            new_state = result["state"]
+            dst = (new_name, new_state)
+            if dst in IngredientGraph.transitions:
+                IngredientGraph.transitions[dst].append((src, action))
+            else:
+                IngredientGraph.transitions[dst] = [(src, action)]
 
-class ChoppedPotato(Ingredient):
-    def __init__(self):
-        super().__init__("Chopped Potato")
+                
+    @staticmethod
+    def get_plan(goal):
+        """Retourne un plan d'action pour atteindre le goal (name, state)"""
+        plans = []
+        visited = set()
 
-    def fry(self):
-        return Fries()
-    
+        def dfs(current, path):
+            if current in visited:
+                return
+            visited.add(current)
+            if not current in IngredientGraph.transitions:
+                plans.append(path[::-1])
+                return
+            for src, action in IngredientGraph.transitions[current]:
+                dfs(src, path + [(action, current)])
 
-class Fries(Ingredient):
-    def __init__(self):
-        super().__init__("Fries")
+        dfs(goal, [])
+        return plans
 
+    @staticmethod
+    def init(json_path):
+        with open(json_path, "r") as f:
+            data = json.load(f)
 
-# Tomato ----------------------------------------------
-class Tomato(Ingredient):
-    def __init__(self):
-        super().__init__("Tomato")
-
-    def chop(self):
-        return ChoppedTomato()
-
-
-class ChoppedTomato(Ingredient):
-    def __init__(self):
-        super().__init__("Chopped Tomato")
-
-
-# Lettuce ----------------------------------------------
-class Lettuce(Ingredient):
-    def __init__(self):
-        super().__init__("Lettuce")
-
-    def chop(self):
-        return ChoppedLettuce()
-
-
-class ChoppedLettuce(Ingredient):
-    def __init__(self):
-        super().__init__("Chopped Lettuce")
-
-
-# Steak ----------------------------------------------
-class Steak(Ingredient):
-    def __init__(self):
-        super().__init__("Steak")
-
-    def cook(self):
-        return CookedSteak()
-
-
-class CookedSteak(Ingredient):
-    def __init__(self):
-        super().__init__("Cooked Steak")
-
-
+            for ing_name, trans_state in data["ingredients"].items():
+                for state, trans in trans_state.items():
+                    IngredientGraph.add(ing_name, state, trans)
+                    

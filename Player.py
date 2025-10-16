@@ -1,6 +1,6 @@
 ### player.py :
 import pygame
-import random
+from Ingredient import IngredientGraph
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, maps, x=1, y=2, tile_size=50):
@@ -36,61 +36,12 @@ class Player(pygame.sprite.Sprite):
         self.move_timer += 1
         self.move_timer %=30
         if self.move_timer == 0:
-            match self.state:
-                case "WALKING":
-                    try:
-                        self.x, self.y = self.path[0]
-                        self.position = self.x*self.map_width+self.y
-                        self.rect.topleft = (self.x * self.tile_size, self.y * self.tile_size)
-                        if len(self.path) == 2:  # On s'arrête quand on est à côté de la case visée
-                            self.path = []
-                            self.state = "IDLE"
-                        else:
-                            self.path = self.path[1:]
-                    except TypeError:
-                        print(f"self.path: {self.path}")
-                case "IDLE":
-                    print("idle player")
-                case "COOKING":
-                    if self.interact("gas_station") == 0:  # Nombre de ticks restants sur la tâche
-                        self.state = "IDLE"
-                case "FRYING":
-                    if self.interact("gas_station") == 0:
-                        self.state = "IDLE"
-                case "CHOPPING":
-                    if self.interact("workbench") == 0:
-                        self.state = "IDLE"
+            print("i see :",self.see())
+            self.action()
 
-        if len(self.orders)>0 :
-            # print(self.orders[0])
-            # print(self.orders[0].desired_dish)
-            
-            # print(self.see(self.orders[0].desired_dish.ingredients))
-            pass
-        
     def set_order(self, o):
         self.orders = o
     
-    def see(self, action):      
-        if(action.get_super_name() == "Ingredient"):
-            return [action]
-        else:
-            if action.__class__.__name__ == "Assemble":
-                
-                naction1 = action.target[0]
-                # print(naction1)
-                naction2 = action.target[1]
-                return [self.see(naction1), self.see(naction2)]
-            else :
-                naction = action.target
-                return [action] + self.see(naction)
-
-    def rmv_order(self,o):
-        self.orders.remove(o)
-    
-    def add_order(self,o):
-        self.orders.append(o)
-
     def go_to(self, target: str, level_index):
         self.path = self.maps.get_path(self.x, self.y, target, level_index)
         if self.path is None:
@@ -100,13 +51,28 @@ class Player(pygame.sprite.Sprite):
             self.state = "WALKING"
             self.path = self.maps.get_path(self.x, self.y, target, level_index)
 
-    def interact(self, target: str, time: int):
-        """Interagit avec la target pendant un nombre de ticks défini"""
-        pass
+    #TODO REWORK
+    def see(self):      
+        """Retourne un plan d'action pour atteindre le goal (name, state)"""
+        if len(self.orders) == 0:
+            return None
+        
+        plans = []
+        visited = set()
+        def dfs(current, path):
+            if current in visited:
+                return
+            visited.add(current)
+            if not current in IngredientGraph.transitions:
+                plans.append(path[::-1])
+                return
+            for src, action in IngredientGraph.transitions[current]:
+                dfs(src, path + [(action, current)])
+        print("I want : ", self.orders[0].desired_dish.ingredients[0].as_tuple())
+        dfs(self.orders[0].desired_dish.ingredients[0].as_tuple(), [])
+        return plans 
 
-    def draw(self, surface):
-        """Dessine le joueur sur la surface donnée."""
-        surface.blit(self.image, self.rect.topleft) 
+
 
     def next(self, chained_list: list): # exemple [[Salade->ChoppedSalad,Meat->CookedMeat],[Salade->ChoppedSalad,Meat->CookedMeat]]
         for recipe in chained_list[0]:  # exemple [Salade->ChoppedSalad,Meat->CookedMeat] 
@@ -129,4 +95,41 @@ class Player(pygame.sprite.Sprite):
 
                 if assemble[0] == Chop:
                     self.state = "CHOPPING"
-        
+    
+    def action(self):
+        match self.state:
+            case "WALKING":
+                try:
+                    self.x, self.y = self.path[0]
+                    self.position = self.x*self.map_width+self.y
+                    self.rect.topleft = (self.x * self.tile_size, self.y * self.tile_size)
+                    if len(self.path) == 2:  # On s'arrête quand on est à côté de la case visée
+                        self.path = []
+                        self.state = "IDLE"
+                    else:
+                        self.path = self.path[1:]
+                except TypeError:
+                    print(f"self.path: {self.path}")
+            case "IDLE":
+                print("idle player")
+            case "COOKING":
+                if self.interact("gas_station") == 0:  # Nombre de ticks restants sur la tâche
+                    self.state = "IDLE" # il faut faire des self.next je pense, ça représente bien le schéma
+            case "CHOPPING":
+                if self.interact("workbench") == 0:
+                    self.state = "IDLE"
+            case "PLATING":
+                if self.interact("plate") == 0:
+                    self.state = "IDLE"
+                    #self.orders[0].remove(done_ingredient)
+            case "COLLECT":
+                if self.interact("food_generatir") == 0:
+                    self.state = "IDLE"
+                    
+    def interact(self, target: str, time: int):
+        """Interagit avec la target pendant un nombre de ticks défini"""
+        pass
+
+    def draw(self, surface):
+        """Dessine le joueur sur la surface donnée."""
+        surface.blit(self.image, self.rect.topleft) 

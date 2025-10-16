@@ -1,5 +1,5 @@
 {
-  "ingredient": {
+  "ingredients": {
     "tomato": {
       "raw": {
         "cut": { "name": "tomato", "state": "chopped" }
@@ -11,9 +11,9 @@
       }
     },
     "lettuce": {
-      "raw": {
-        "cut": { "name": "lettuce", "state": "chopped" }
-      }
+        "raw": {
+            "cut": { "name": "lettuce", "state": "chopped" }
+        }
     },
     "bun": {
       "raw": {}
