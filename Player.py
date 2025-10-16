@@ -56,10 +56,11 @@ class Player(pygame.sprite.Sprite):
                     pass
 
         if len(self.orders)>0 :
-            print(self.orders[0])
-            print(self.orders[0].desired_dish)
+            # print(self.orders[0])
+            # print(self.orders[0].desired_dish)
             
-            print(self.see(self.orders[0].desired_dish.ingredients))
+            # print(self.see(self.orders[0].desired_dish.ingredients))
+            pass
 
     def see(self, action):      
         if(action.get_super_name() == "Ingredient"):
@@ -68,7 +69,7 @@ class Player(pygame.sprite.Sprite):
             if action.__class__.__name__ == "Assemble":
                 
                 naction1 = action.target[0]
-                print(naction1)
+                # print(naction1)
                 naction2 = action.target[1]
                 return [self.see(naction1), self.see(naction2)]
             else :
@@ -97,7 +98,7 @@ class Player(pygame.sprite.Sprite):
         """Dessine le joueur sur la surface donnée."""
         surface.blit(self.image, self.rect.topleft) 
 
-    def next(self, chained_list: list[list[Assemble]]): # exemple [[Salade->ChoppedSalad,Meat->CookedMeat],[Salade->ChoppedSalad,Meat->CookedMeat]]
+    def next(self, chained_list: list): # exemple [[Salade->ChoppedSalad,Meat->CookedMeat],[Salade->ChoppedSalad,Meat->CookedMeat]]
         for chained_recipe in chained_list[0]:
             for chained_action in chained_recipe:
 

@@ -67,7 +67,7 @@ class Game:
                         current_col = self.player.position % self.player.map_width
                         current_row = self.player.position // self.player.map_width
                         self.player.rect.topleft = (current_col * self.player.tile_size, current_row * self.player.tile_size)
-                        print(f"Position du joueur : {current_col}, {current_row}")
+                        # print(f"Position du joueur : {current_col}, {current_row}")
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()

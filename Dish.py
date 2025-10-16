@@ -9,7 +9,7 @@ class Dish:
     def __init__(self, name, ingredients : list[Ingredient]):
         self.name = name
         self.ingredients = ingredients
-        print(ingredients)
+        # print(ingredients)
 
     def __str__(self):
         return f"{self.name}: {self.ingredients}"
