@@ -65,7 +65,10 @@ class Player(pygame.sprite.Sprite):
             
             # print(self.see(self.orders[0].desired_dish.ingredients))
             pass
-
+        
+    def set_order(self, o):
+        self.orders = o
+    
     def see(self, action):      
         if(action.get_super_name() == "Ingredient"):
             return [action]

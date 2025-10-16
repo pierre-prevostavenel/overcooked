@@ -28,7 +28,8 @@ class Game:
 
         self.player = Player(self.maps,tile_size=self.tile_size)
         self.all_sprites.add(self.player)
-
+        self.player.set_order(self.orders)
+    
         self.button_width = 120
         self.button_height = 40
         self.prev_button = pygame.Rect(10, screen_height - 50, self.button_width, self.button_height)
@@ -82,7 +83,7 @@ class Game:
     def updateOrders(self):
         for o in self.orders[:]:  
             if not o.update():
-                self.player.rmv_order(o)
+                self.orders.remove(o)
                 self.gameState.fail_order()
                 print("Commande raté :/ ! " + o.__str__())
                 
@@ -90,11 +91,11 @@ class Game:
         if randint(1, 100) <= 1:
             order = Order(30) #possible de chager le temps restant pour une commande
             print("Nouvelle commandes ! " + order.__str__())
-            self.player.add_order(order)
+            self.orders.append(order)
             print(f"Total commande : {len(self.orders)}")
+            
         
         
-
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)

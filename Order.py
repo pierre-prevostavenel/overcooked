@@ -2,9 +2,10 @@ from Dish import Dish
 import pygame
 
 class Order:
-    def __init__(self, total_time=60):
+    def __init__(self, t_time=60):
         self.desired_dish = Dish.random_dish()
-        self.time_remaining = total_time * 60
+        self.time_remaining = t_time * 60
+        self.total_time = t_time * 60
 
     def accept_order(self, dish):
         return Dish.equal(self.desired_dish, dish)
@@ -27,7 +28,7 @@ class Order:
 
         for i, order in enumerate(orders):
             dish = order.desired_dish
-            time_ratio = order.time_remaining / (60 * 60)
+            time_ratio = order.time_remaining / order.total_time
             time_ratio = max(0, min(1, time_ratio))
 
             order_y = y + i * spacing

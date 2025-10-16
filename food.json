@@ -1,0 +1,33 @@
+{
+  "ingredient": {
+    "tomato": {
+      "raw": {
+        "cut": { "name": "tomato", "state": "chopped" }
+      }
+    },
+    "steak": {
+      "raw": {
+        "cook": { "name": "steak", "state": "cooked" }
+      }
+    },
+    "lettuce": {
+      "raw": {
+        "cut": { "name": "lettuce", "state": "chopped" }
+      }
+    },
+    "bun": {
+      "raw": {}
+    }
+  },
+  "dish": {
+    "salad": [
+      { "name": "tomato", "state": "chopped" },
+      { "name": "lettuce", "state": "chopped" }
+    ],
+    "burger": [
+      { "name": "steak", "state": "cooked" },
+      { "name": "bun", "state": "raw" },
+      { "name": "tomato", "state": "chopped" }
+    ]
+  }
+}
