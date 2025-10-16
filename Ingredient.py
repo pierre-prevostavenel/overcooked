@@ -16,6 +16,7 @@ class Ingredient(ABC):
 
     def __repr__(self):
         return self.name
+    
     def get_super_name(self):
         return "Ingredient"
 

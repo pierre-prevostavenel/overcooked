@@ -17,6 +17,8 @@ class Player(pygame.sprite.Sprite):
         self.move_cooldown = 0
         self.move_timer = 20
 
+        self.itemHeld = None
+
         try:
             self.image = pygame.image.load("assets/player.png").convert_alpha()
             self.image = pygame.transform.scale(self.image, (tile_size, tile_size))
@@ -86,6 +88,7 @@ class Player(pygame.sprite.Sprite):
         self.path = self.maps.get_path(self.x, self.y, target, level_index)
         if self.path is None:
             print("Erreur : chemin non trouvé")
+            self.state = "IDLE"
         else:
             self.state = "WALKING"
             self.path = self.maps.get_path(self.x, self.y, target, level_index)
@@ -99,17 +102,24 @@ class Player(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect.topleft) 
 
     def next(self, chained_list: list): # exemple [[Salade->ChoppedSalad,Meat->CookedMeat],[Salade->ChoppedSalad,Meat->CookedMeat]]
-        for chained_recipe in chained_list[0]:
-            for chained_action in chained_recipe:
+        for recipe in chained_list[0]:  # exemple [Salade->ChoppedSalad,Meat->CookedMeat] 
+            for assemble in recipe: # exemple Salade->ChoppedSalad (objet de type Assemble)
 
-                # Regarder si chained_action[1] est déjà réalisée
-
-                if chained_action[0] == Cook:
+                # Regarder si assemble.t2 est déjà réalisée
+                if self.itemHeld is not None and self.itemHeld.name == assemble.t2.name:
+                    # Amener l'aliment à l'assiette
+                    self.go_to("")
+                    self.state = "WALKING" # to plate # puis déposer l'élément dans l'asssiette
+                    continue
+                
+                # Regarder si le player est à la bonne table (position) pour l'aliment
+                
+                if assemble[0] == Cook:
                     self.state = "COOKING" # arriver à transmettre l'élément à traiter
 
-                if chained_action[0] == Fry:
+                if assemble[0] == Fry:
                     self.state = "FRYING"
 
-                if chained_action[0] == Chop:
+                if assemble[0] == Chop:
                     self.state = "CHOPPING"
         
