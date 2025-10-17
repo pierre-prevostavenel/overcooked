@@ -25,11 +25,11 @@ class Game:
         self.all_sprites = self.maps.get_level(self.current_level_index)
 
         self.gameState = GameState()
+
         Dish.init("food.json")
-        IngredientGraph.init("food.json")
         self.orders = []
 
-        self.player = Player(self.maps,tile_size=self.tile_size)
+        self.player = Player(self.maps,"food.json",tile_size=self.tile_size)
         self.all_sprites.add(self.player)
         self.player.set_order(self.orders)
     
@@ -131,7 +131,6 @@ class Game:
             self.draw()
             self.clock.tick(60)
         pygame.quit()
-
 
 if __name__ == "__main__":
     game = Game()

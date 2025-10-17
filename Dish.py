@@ -51,5 +51,6 @@ class Dish:
                 )
                 for ing in required_ingredients
             ]
-            Dish.dishes.append((dish_name, ingredients))
+            if(dish_name =="burger"):
+                Dish.dishes.append((dish_name, ingredients))
 

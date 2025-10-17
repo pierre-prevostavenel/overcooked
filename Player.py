@@ -1,9 +1,9 @@
 ### player.py :
 import pygame
-from Ingredient import IngredientGraph
+import json
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, maps, x=1, y=2, tile_size=50):
+    def __init__(self, maps, food_json_path, x=1, y=2, tile_size=50):
         super().__init__()
         self.map_width = 10
         self.tile_size = tile_size
@@ -13,6 +13,11 @@ class Player(pygame.sprite.Sprite):
         self.orders = []
         self.position = y * self.map_width + x
         self.manual_control = False
+
+        # pré calcul de plans pour réaliser les recettes
+        self.transitions = {}
+        self.init_transitions(food_json_path)
+        print(self.transitions)
 
         self.move_cooldown = 0
         self.move_timer = 20
@@ -38,6 +43,22 @@ class Player(pygame.sprite.Sprite):
         if self.move_timer == 0:
             print("i see :",self.see())
             self.action()
+    
+    def init_transitions(self, json_path):
+        with open(json_path, "r") as f:
+            data = json.load(f)
+            for ing_name, trans_state in data["ingredients"].items():
+                for state, trans in trans_state.items():
+                    src = (ing_name, state)
+                    for action, result in trans.items():
+                        new_name = result["name"]
+                        new_state = result["state"]
+                        dst = (new_name, new_state)
+                        if dst in self.transitions:
+                            self.transitions[dst].append((src, action))
+                        else:
+                            self.transitions[dst] = [(src, action)]
+                self.transitions[src] = [(None ,'fetch')]
 
     def set_order(self, o):
         self.orders = o
@@ -63,10 +84,10 @@ class Player(pygame.sprite.Sprite):
             if current in visited:
                 return
             visited.add(current)
-            if not current in IngredientGraph.transitions:
+            if not current in self.transitions:
                 plans.append(path[::-1])
                 return
-            for src, action in IngredientGraph.transitions[current]:
+            for src, action in self.transitions[current]:
                 dfs(src, path + [(action, current)])
         print("I want : ", self.orders[0].desired_dish.ingredients[0].as_tuple())
         dfs(self.orders[0].desired_dish.ingredients[0].as_tuple(), [])
