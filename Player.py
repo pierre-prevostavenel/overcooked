@@ -149,7 +149,7 @@ class Player(pygame.sprite.Sprite):
                     self.state = "IDLE"
                     #self.orders[0].remove(done_ingredient)
             case "COLLECT":
-                if self.interact("food_generatir") == 0:
+                if self.interact("food_generation") == 0:
                     self.state = "IDLE"
                     
     def interact(self, target: str):
@@ -170,8 +170,6 @@ class Player(pygame.sprite.Sprite):
             self.interaction_progress -= 1
             if self.interaction_progress < 0: self.interaction_progress = 0  # Sécurité normalement non nécessaire
             return self.interaction_progress  # On retourne le nombre de ticks restants (0 = fini)
-
-
 
     def draw(self, surface):
         """Dessine le joueur sur la surface donnée."""
