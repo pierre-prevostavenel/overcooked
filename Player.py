@@ -10,7 +10,6 @@ class Player(pygame.sprite.Sprite):
         self.maps = maps
         self.x =x
         self.y = y
-        
         self.orders = []
         self.position = y * self.map_width + x
         self.manual_control = False
@@ -25,7 +24,6 @@ class Player(pygame.sprite.Sprite):
         self.interaction_progress = 0
 
         self.itemHeld = None
-        self.plans = []
 
         try:
             self.image = pygame.image.load("assets/player.png").convert_alpha()
@@ -43,8 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.move_timer += 1
         self.move_timer %=30
         if self.move_timer == 0:
-            if len(self.plans) == 0:
-                print("i see :",self.see())
+            print("i see :",self.see())
             self.action()
     
     def init_transitions(self, json_path):
@@ -93,19 +90,27 @@ class Player(pygame.sprite.Sprite):
             for src, action in self.transitions[current]:
                 dfs(src, path + [(action, current)])
         print("I want : ", self.orders[0].desired_dish.ingredients[0].as_tuple())
-        print(self.orders[0].desired_dish.ingredients)
-        for i in (self.orders[0].desired_dish.ingredients): 
-            print(i)
-            dfs(i.as_tuple(), [])
-        self.plans = plans
-        print(self.plans)
+        dfs(self.orders[0].desired_dish.ingredients[0].as_tuple(), [])
+        return plans 
 
 
 
-    def next(self, chained_list: list): # exemple [[Salade->ChoppedSalad,Meat->CookedMeat],[Salade->ChoppedSalad,Meat->CookedMeat]]
-        for recipe in chained_list[0]:  # exemple [Salade->ChoppedSalad,Meat->CookedMeat] 
-            for assemble in recipe: # exemple Salade->ChoppedSalad (objet de type Assemble)
+    def next(self, chained_list: list):        
+        # chained_list = see()["orders"]
+        # [Assem]
 
+        chained_list = [[('fetch', ('steak', 'raw')), ('cook', ('steak', 'cooked'))]]
+
+        for recipe in chained_list[0]:  # exemple [('fetch', ('steak', 'raw')), ('cook', ('steak', 'cooked'))] 
+            for ask in recipe: # exemple ('fetch', ('steak', 'raw'))
+                # self.action()
+                
+
+                # cas 1 : l'agent  n'a rien dans itemHeld *
+
+                # cas 2 : l'agent à déjà l'élément t1 de l'assemble *
+                    #
+                # cas 3 : l'agent à déjà l'élément t2 de l'assemble *
                 # Regarder si assemble.t2 est déjà réalisée
                 if self.itemHeld is not None and self.itemHeld.name == assemble.t2.name:
                     # Amener l'aliment à l'assiette
@@ -115,14 +120,6 @@ class Player(pygame.sprite.Sprite):
                 
                 # Regarder si le player est à la bonne table (position) pour l'aliment
                 
-                if assemble[0] == Cook:
-                    self.state = "COOKING" # arriver à transmettre l'élément à traiter
-
-                if assemble[0] == Fry:
-                    self.state = "FRYING"
-
-                if assemble[0] == Chop:
-                    self.state = "CHOPPING"
     
     def action(self):
         match self.state:
