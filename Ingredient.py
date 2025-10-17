@@ -1,36 +1,53 @@
 import json
+from Item import Item
 
-class Ingredient:
-    def __init__(self, name, state="raw", transformations={}):
-        self.name = name
+# charger le JSON une seule fois
+with open("food.json") as f:
+    FOOD_DATA = json.load(f)["ingredients"]
+
+class Ingredient(Item):
+    def __init__(self, name: str, state: str = "raw", rect=(0,0,50,50), image_path=None, fallback_color=(255,255,255), layer=0):
+        super().__init__(name, rect=rect, image_path=image_path, fallback_color=fallback_color, layer=layer)
         self.state = state
-        self.transformations = transformations  # action -> (new_name, new_state)
 
-    def apply_action(self, action):
-        if action in self.transformations:
-            new_name, new_state = self.transformations[action]
-            self.name = new_name
-            self.state = new_state
-        else:
-            print(f"Action '{action}' has no effect on {self}")
+    def _get_actions(self):
+        """Récupère le dictionnaire actions pour cet ingredient et cet état"""
+        ing_data = next((ing for ing in FOOD_DATA if ing["name"] == self.name), None)
+        if not ing_data:
+            return {}
+        state_data = next((s for s in ing_data["states"] if s["state"] == self.state), None)
+        if not state_data:
+            return {}
+        return state_data.get("actions", {})
+
+    def _transform(self, action: str):
+        actions = self._get_actions()
+        if action in actions:
+            result = actions[action]
+            return Ingredient(
+                result["name"], 
+                result["state"], 
+                rect=self.rect,
+                image_path=None,           # <-- mettre None
+                fallback_color=(255,255,255), 
+                layer=self._layer
+            )
+        print(f"Action '{action}' has no effect on {self}")
+        return None
     
-    def get_possible_actions(self):
-        return list(self.transformations.keys())
+    # les actions que player peut effectuer sur cet ingrédient (ils return None si pas possible)
+# --------------------------------------------------------------------
+
+    def cook(self):
+        return self._transform("cook")
+
+    def chop(self):
+        return self._transform("chop")  # action "chop" dans le JSON
+
+# --------------------------------------------------------------------
 
     def as_tuple(self):
-        print("burh")
         return (self.name, self.state)
-
+    
     def __str__(self):
         return f"{self.name} ({self.state})"
-    
-    def __repr__(self):
-        return self.__str__()
-    
-    @staticmethod
-    def equal(i1,i2):
-        return (i1.name == i2.name) and (i1.state == i2.state) 
-    
-    def __hash__(self):
-        return hash((self.name, self.state))
-                    

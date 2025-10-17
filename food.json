@@ -1,33 +1,97 @@
 {
-  "ingredients": {
-    "tomato": {
-      "raw": {
-        "cut": { "name": "tomato", "state": "chopped" }
-      }
-    },
-    "steak": {
-      "raw": {
-        "cook": { "name": "steak", "state": "cooked" }
-      }
-    },
-    "lettuce": {
-        "raw": {
-            "cut": { "name": "lettuce", "state": "chopped" }
+  "ingredients": [
+    {
+      "name": "tomato",
+      "states": [
+        {
+          "state": "raw",
+          "actions": {
+            "chop": {"name": "tomato", "state": "chopped"}
+          }
+        },
+        {
+          "state": "chopped",
+          "actions": {}
         }
+      ]
     },
-    "bun": {
-      "raw": {}
+    {
+      "name": "steak",
+      "states": [
+        {
+          "state": "raw",
+          "actions": {
+            "cook": {"name": "steak", "state": "cooked"}
+          }
+        },
+        {
+          "state": "cooked",
+          "actions": {}
+        }
+      ]
+    },
+    {
+      "name": "lettuce",
+      "states": [
+        {
+          "state": "raw",
+          "actions": {
+            "chop": {"name": "lettuce", "state": "chopped"}
+          }
+        },
+        {
+          "state": "chopped",
+          "actions": {}
+        }
+      ]
+    },
+    {
+      "name": "bun",
+      "states": [
+        {
+          "state": "raw",
+          "actions": {}
+        }
+      ]
+    },
+    {
+      "name": "potato",
+      "states": [
+        {
+          "state": "raw",
+          "actions": {
+            "cook": {"name": "potato", "state": "cooked"},
+            "chop": {"name": "potato", "state": "chopped"}
+          }
+        },
+        {
+          "state": "chopped",
+          "actions": {
+            "cook": {"name": "fries", "state": "cooked"}
+          }
+        },
+        {
+          "state": "cooked",
+          "actions": {}
+        }
+      ]
     }
-  },
-  "dish": {
-    "salad": [
-      { "name": "tomato", "state": "chopped" },
-      { "name": "lettuce", "state": "chopped" }
-    ],
-    "burger": [
-      { "name": "steak", "state": "cooked" },
-      { "name": "bun", "state": "raw" },
-      { "name": "tomato", "state": "chopped" }
-    ]
-  }
+  ],
+  "dishes": [
+    {
+      "name": "salad",
+      "ingredients": [
+        {"name": "tomato", "state": "chopped"},
+        {"name": "lettuce", "state": "chopped"}
+      ]
+    },
+    {
+      "name": "burger",
+      "ingredients": [
+        {"name": "steak", "state": "cooked"},
+        {"name": "bun", "state": "raw"},
+        {"name": "tomato", "state": "chopped"}
+      ]
+    }
+  ]
 }

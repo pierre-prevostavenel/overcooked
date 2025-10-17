@@ -1,56 +1,44 @@
-from Ingredient import Ingredient
-from Action import *
+import json
 import random
-
 from Ingredient import Ingredient
-class Dish:
-    dishes = []
+import os
 
-    def __init__(self, name, ingredients : list[Ingredient]):
+class Dish:
+    dishes = []  # liste des tuples (name, list[Ingredient])
+
+    def __init__(self, name: str, ingredients: list[Ingredient]):
         self.name = name
         self.ingredients = ingredients
-        # print(ingredients)
 
     def __str__(self):
-        buff = f"{self.name}: "
-        for i in self.ingredients :
-            buff += " " + i.__str__()
-        return buff
+        return f"{self.name}: " + ", ".join(str(i) for i in self.ingredients)
 
     @staticmethod
     def random_dish():
         name, ingredients = random.choice(Dish.dishes)
         return Dish(name, ingredients)
 
-    # TODO voir pour implémenter un systéme de score plus avancé
     @staticmethod
     def equal(dish1, dish2):
-        # on veut le même nb d'occ d'ingrédient dans chaque plat
+        """Compare le nombre d’occurrences de chaque ingrédient"""
         def count_ingredients(ingredients):
             c = {}
             for i in ingredients:
-                if(i in c):
-                    c[i] += 1
-                else :
-                    c[i] = 1
+                c[i] = c.get(i, 0) + 1
             return c
-        c1 = count_ingredients(dish1.ingredients)
-        c2 = count_ingredients(dish2.ingredients)
-        return c1 == c2
+        return count_ingredients(dish1.ingredients) == count_ingredients(dish2.ingredients)
 
     @staticmethod
-    def init(json_path):
+    def init():
+        """Charge tous les plats depuis food.json automatiquement"""
+        json_path = os.path.join(os.path.dirname(__file__), "food.json")
         with open(json_path, "r") as f:
             data = json.load(f)
-        
-        for dish_name, required_ingredients in data["dish"].items():
-            ingredients = [
-                Ingredient(
-                    ing["name"],
-                    ing["state"]
-                )
-                for ing in required_ingredients
-            ]
-            if(dish_name =="burger"):
-                Dish.dishes.append((dish_name, ingredients))
 
+        for dish_data in data.get("dishes", []):
+            dish_name = dish_data["name"]
+            ingredients = [
+                Ingredient(ing["name"], ing["state"])
+                for ing in dish_data.get("ingredients", [])
+            ]
+            Dish.dishes.append((dish_name, ingredients))

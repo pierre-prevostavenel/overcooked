@@ -1,13 +1,9 @@
-### main.py :
 import pygame
-from pygame.sprite import LayeredUpdates
 from Player import Player
 from Maps import Maps
 from random import randint
-from Client import Client
 from Order import Order
 from Dish import Dish
-from Ingredient import *
 from GameState import GameState
 
 class Game:
@@ -21,23 +17,26 @@ class Game:
 
         self.tile_size = screen_width // 10
         self.maps = Maps(tile_size=self.tile_size)
-        self.current_level_index = 0
-        self.all_sprites = self.maps.get_level(self.current_level_index)
+        self.all_sprites = pygame.sprite.LayeredUpdates()
+        
+        # ajouter toutes les tiles à all_sprites
+        for row in self.maps.grid:
+            for tile in row:
+                self.all_sprites.add(tile)
+                print(f"Added tile at ({tile.row}, {tile.col}) of type '{tile.tile_type}'")
 
         self.gameState = GameState()
-
-        Dish.init("food.json")
+        Dish.init()  # Dish s'occupe de charger le JSON
         self.orders = []
 
-        self.player = Player(self.maps,"food.json",tile_size=self.tile_size)
+        self.player = Player(self.maps, tile_size=self.tile_size)
         self.all_sprites.add(self.player)
         self.player.set_order(self.orders)
-    
-        self.button_width = 120
-        self.button_height = 40
-        self.prev_button = pygame.Rect(10, screen_height - 50, self.button_width, self.button_height)
-        self.next_button = pygame.Rect(screen_width - 130, screen_height - 50, self.button_width, self.button_height)
-        self.font = pygame.font.SysFont(None, 30)
+
+        # Buttons si tu veux les garder
+        self.font = pygame.font.SysFont("arial", 20)
+        self.prev_button = pygame.Rect(10, screen_height - 40, 100, 30)
+        self.next_button = pygame.Rect(screen_width - 110, screen_height - 40, 100, 30)
 
         self.running = True
 
@@ -50,80 +49,65 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     self.player.manual_control = not self.player.manual_control
 
-                # AJOUT : Gérer le déplacement si le mode manuel est actif
                 if self.player.manual_control:
                     moved = False
-                    if event.key == pygame.K_z and self.player.position >= self.player.map_width:
-                        self.player.position -= self.player.map_width
+                    if event.key == pygame.K_z and self.player.y > 0:
+                        self.player.y -= 1
                         moved = True
-                    elif event.key == pygame.K_s and self.player.position < self.player.map_width * (self.player.map_width - 1):
-                        self.player.position += self.player.map_width
+                    elif event.key == pygame.K_s and self.player.y < self.maps.height - 1:
+                        self.player.y += 1
                         moved = True
-                    elif event.key == pygame.K_q and self.player.position % self.player.map_width != 0:
-                        self.player.position -= 1
+                    elif event.key == pygame.K_q and self.player.x > 0:
+                        self.player.x -= 1
                         moved = True
-                    elif event.key == pygame.K_d and self.player.position % self.player.map_width != self.player.map_width - 1:
-                        self.player.position += 1
+                    elif event.key == pygame.K_d and self.player.x < self.maps.width - 1:
+                        self.player.x += 1
                         moved = True
                     
-                    # Si le joueur a bougé, on met à jour sa position graphique (le rect)
                     if moved:
-                        current_col = self.player.position % self.player.map_width
-                        current_row = self.player.position // self.player.map_width
-                        self.player.rect.topleft = (current_col * self.player.tile_size, current_row * self.player.tile_size)
-                        # print(f"Position du joueur : {current_col}, {current_row}")
+                        self.player.position = self.player.y * self.maps.width + self.player.x
+                        self.player.rect.topleft = (self.player.x * self.tile_size, self.player.y * self.tile_size)
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
+                # tu peux garder ces boutons ou les supprimer si inutile
                 if self.prev_button.collidepoint(mouse_pos):
-                    self.previous_level()
+                    print("Bouton précédent désactivé")
                 elif self.next_button.collidepoint(mouse_pos):
-                    self.next_level()
+                    print("Bouton suivant désactivé")
 
     def update(self):
         self.all_sprites.update()
 
     def updateOrders(self):
-        for o in self.orders[:]:  
+        for o in self.orders[:]:
             if not o.update():
                 self.orders.remove(o)
                 self.gameState.fail_order()
-                print("Commande raté :/ ! " + o.__str__())
+                print("Commande ratée :/ " + str(o))
                 
-        #TODO voir pour faire "scale" la difficultée
         if randint(1, 100) <= 1:
-            order = Order(30) #possible de chager le temps restant pour une commande
-            print("Nouvelle commandes ! " + order.__str__())
+            order = Order(30)
+            print("Nouvelle commande ! " + str(order))
             self.orders.append(order)
-            print(f"Total commande : {len(self.orders)}")
-            
-        
+            print(f"Total commandes : {len(self.orders)}")
         
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
-
-        pygame.draw.rect(self.screen, (100, 100, 255), self.prev_button)
-        pygame.draw.rect(self.screen, (100, 100, 255), self.next_button)
+        self.player.draw(self.screen)  # ← ici, draw() sera exécuté
         self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
         self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
-        Order.draw_orders(self.screen, self.orders, pygame.font.SysFont("arial", 20))
+        Order.draw_orders(self.screen, self.orders, self.font)
         pygame.display.flip()
 
-    def next_level(self):
-        if self.current_level_index + 1 < self.maps.num_levels():
-            self.current_level_index += 1
-            self.all_sprites = self.maps.get_level(self.current_level_index)
-            self.all_sprites.add(self.player)
-
-    def previous_level(self):
-        if self.current_level_index - 1 >= 0:
-            self.current_level_index -= 1
-            self.all_sprites = self.maps.get_level(self.current_level_index)
-            self.all_sprites.add(self.player)
-
     def run(self):
-        self.player.go_to("gas_station", self.current_level_index)
+        # Par défaut, aller à la première station si nécessaire
+        
+        fridge_tile = self.maps.grid[9][8]
+        oven_tile = self.maps.grid[5][5]
+        self.player.targets = [fridge_tile, oven_tile]
+
         while self.running:
             self.handle_events()
             self.updateOrders()
@@ -131,6 +115,7 @@ class Game:
             self.draw()
             self.clock.tick(60)
         pygame.quit()
+
 
 if __name__ == "__main__":
     game = Game()
