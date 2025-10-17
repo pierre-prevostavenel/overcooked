@@ -1,4 +1,5 @@
 # Station.py
+from Ingredient import Ingredient
 from Tile import Tile
 
 class Station(Tile):
@@ -16,14 +17,16 @@ class Fridge(Station):
     def __init__(self, row, col, tile_size=50):
         super().__init__(row, col, "fridge", action="fetch", tile_size=tile_size)
 
-    def interact(self, player, ingredient):
-        """Permet au player de récupérer un ingrédient."""
-        # Exemple simple : toujours donner un "tomato" cru
-        if player.itemHeld is None:
-            player.grab(ingredient)
-            print(f"{player} was given {ingredient} from the fridge.")
-        else:
-            print(f"{player} cannot pick up item; hands are full.")
+    def interact(self, player, ingredient_name="potato", state="raw"):
+        """
+        Crée dynamiquement l'Ingredient au moment de l'interaction.
+        """
+        try:
+            ingredient_obj = Ingredient(ingredient_name, state)
+            player.grab(ingredient_obj)
+            print(f"Fridge gave {ingredient_obj} to {player}")
+        except ValueError as e:
+            print(f"Erreur lors de la création de l'ingrédient : {e}")
 
 class GasStation(Station):
     def __init__(self, row, col, tile_size=50):
@@ -37,6 +40,7 @@ class GasStation(Station):
             if cooked_ingredient:
                 player.itemHeld = cooked_ingredient
                 print(f"{player} cooked {ingredient} into {cooked_ingredient} at the gas station.")
+                print(f"{player} now holds {player.itemHeld}.")
             else:
                 print(f"{ingredient} cannot be cooked.")
         else:

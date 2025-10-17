@@ -202,7 +202,7 @@ class Player(pygame.sprite.Sprite):
             case "INTERACT":
                 if isinstance(self.target, Station):
                     if isinstance(self.target, Fridge):
-                        self.interact(self.target, ingredient )
+                        self.interact(self.target) # TODO have to add ingredient here 
                     self.interact(self.target)
                     self.state = "IDLE"
                     if self.targets:
@@ -225,10 +225,16 @@ class Player(pygame.sprite.Sprite):
             print(f"{self} picked up {item}.")
         else:
             print(f"{self} cannot pick up item; hands are full.")
+        
 
-    def interact(self, station : Station):
-        station.interact(self)
+    def interact(self, station: Station, ingredient_name="potato", state="raw"):
+        """
+        Laisse le Fridge créer l'Ingredient au moment de l'interaction.
+        ingredient_name et state sont juste des paramètres pour l'état initial.
+        """
+        if isinstance(station, Fridge):
+            station.interact(self, ingredient_name, state)
+        else:
+            station.interact(self)
 
-    def interact(self, fridge : Fridge, ingredient: Ingredient):
-        fridge.interact(self, ingredient)
-            
+                

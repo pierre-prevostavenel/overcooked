@@ -113,7 +113,7 @@ class Game:
             self.updateOrders()
             self.update()
             self.draw()
-            self.clock.tick(60)
+            self.clock.tick(120)
         pygame.quit()
 
 
