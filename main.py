@@ -1,18 +1,20 @@
 ### main.py :
 import pygame
+import sys
 from pygame.sprite import LayeredUpdates
 from Player import Player
 from Maps import Maps
 from random import randint
 from Client import Client
 from Order import Order
-from Dish import Dish
+from Dish import *
 from Ingredient import *
 from GameState import GameState
 
 class Game:
-    def __init__(self, screen_width=720, screen_height=720):
-        
+    score=0
+    def __init__(self, screen_width=1000, screen_height=1000):
+
         pygame.init()
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -28,11 +30,10 @@ class Game:
         self.gameState = GameState()
 
         Dish.init("food.json")
-        self.orders = []
+        self.orders = [Order(60)]
 
         self.player = Player(self.maps,"food.json",tile_size=self.tile_size)
         self.all_sprites.add(self.player)
-        self.player.set_order(self.orders)
     
         self.button_width = 120
         self.button_height = 40
@@ -41,6 +42,8 @@ class Game:
         self.font = pygame.font.SysFont(None, 30)
 
         self.running = True
+
+        self.score = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -86,20 +89,32 @@ class Game:
 
     def get_orders(self):
         return self.orders
+    
+    def accept_plate(self,plate):
+        print("Resultat accept plate : ", plate.verify(self.orders[0].desired_dish))
+        if(plate.verify(self.orders[0].desired_dish)):
+            self.score +=1 
+            print("COMMANDE REUSSIE ! score actuel : ", self.score)
+            self.orders.remove(self.orders[0])
+            return True
+        print("Commande ratée :/ ! " + self.orders[0].__str__(), "plate ", plate)
+        self.orders.remove(self.orders[0])
+        return False
 
     def updateOrders(self):
         for o in self.orders[:]:  
             if not o.update():
                 self.orders.remove(o)
                 self.gameState.fail_order()
-                print("Commande raté :/ ! " + o.__str__())
+                print("Commande ratée ! L'agent a perdu " + o.__str__())
+                sys.exit("Commande ratée, l'agent a perdu.")
                 
-        #TODO voir pour faire "scale" la difficultée
-        if randint(1, 100) <= 1:
-            order = Order(30) #possible de chager le temps restant pour une commande
-            print("Nouvelle commandes ! " + order.__str__())
+        #TODO voir pour faire "scale" la difficulté
+        if randint(1, 600) <= 1: #en moyenne 1 commande toute les 10 secondes
+            order = Order(60) #possible de changer le temps restant pour une commande
+            #print("Nouvelle commandes ! " + order.__str__())
             self.orders.append(order)
-            print(f"Total commande : {len(self.orders)}")
+            #print(f"Total commande : {len(self.orders)}")
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -107,8 +122,9 @@ class Game:
 
         pygame.draw.rect(self.screen, (100, 100, 255), self.prev_button)
         pygame.draw.rect(self.screen, (100, 100, 255), self.next_button)
-        self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
-        self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
+        # Changement de map (plus utilisé)
+        # self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
+        # self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
         Order.draw_orders(self.screen, self.orders, pygame.font.SysFont("arial", 20))
         pygame.display.flip()
 
@@ -125,7 +141,6 @@ class Game:
             self.all_sprites.add(self.player)
 
     def run(self):
-        self.player.go_to("gas_station", self.current_level_index)
         while self.running:
             self.handle_events()
             self.updateOrders()

@@ -2,6 +2,7 @@
 import pygame
 import json
 from Ingredient import Ingredient
+from Dish import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, maps, food_json_path, x=1, y=2, tile_size=50):
@@ -9,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.map_width = 10
         self.tile_size = tile_size
         self.maps = maps
-        self.x =x
+        self.x = x
         self.y = y
         
         self.position = y * self.map_width + x
@@ -23,10 +24,12 @@ class Player(pygame.sprite.Sprite):
         self.move_timer = 20
         self.interaction_progress = 0
 
+        self.state = "IDLE"
         self.itemHeld = None
+        self.plans = None
         self.current_recipe = None
         self.itemWanted = None
-        self.plans = []
+        self.path = []
 
         try:
             self.image = pygame.image.load("assets/player.png").convert_alpha()
@@ -40,9 +43,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = (x * tile_size, y * tile_size)
 
     def update(self, E):
-        # Toutes les 1/2s (30 ticks)
+        # Toutes les 1/4s (30 ticks)
         self.move_timer += 1
-        self.move_timer %=30
+        self.move_timer %=15
         if self.move_timer == 0:
             self.next(self.see(E))
             self.action()
@@ -63,117 +66,175 @@ class Player(pygame.sprite.Sprite):
                             self.transitions[dst] = [(src, action)]
                 self.transitions[src] = [(None ,'fetch')]
     
-    def go_to(self, target: str, level_index):
-        self.path = self.maps.get_path(self.x, self.y, target, level_index)
+    def create_plan(self, orders):
+        if len(orders) == 0:
+            return None
+
+        plans = []
+        for ingredient in orders[0].desired_dish.ingredients:
+            path = []
+            current = ingredient.as_tuple()
+            while current in self.transitions:
+                src, action = self.transitions[current][0]  
+                path.append((action, current)) 
+                current = src  
+            plans.append(path[::-1])  
+        # print("COMMANDE : ", orders[0].desired_dish.ingredients)
+        # print("PLANS : ", plans)
+        return plans
+
+    def see(self, E): 
+        """Perçoit l'environnement et retourne les informations nécessaires à la décision."""
+        per = {
+            "orders": E.get_orders(),
+            "game": E,
+            # Tu peux ajouter ici d'autres perceptions plus tard (ingrédients, joueurs, etc.)
+        }
+        return per
+
+    def go_to(self, target: str):
+        """Prepare le bot à se déplacer vers target, renvoi si il est arrivé à destination ou non"""
+        self.path = self.maps.get_path(self.x, self.y, target)
         if self.path is None:
             print("Erreur : chemin non trouvé")
             self.state = "IDLE"
         else:
             self.state = "WALKING"
-            self.path = self.maps.get_path(self.x, self.y, target, level_index)
+            self.path = self.maps.get_path(self.x, self.y, target)
+        return len(self.path) == 1
 
-    #TODO REWORK
-    def see(self, E):      
-        per = E.get_orders()
-        return per
-
-    def next(self, per): 
+    def next(self, per):
+        if  (self.state != "WALKING") and (self.state != "IDLE"):
+            return 
         
-        """Retourne un plan d'action pour atteindre le goal (name, state)"""
-        if len(self.orders) == 0:
-            return None
-        
-        if self.current_recipe is None:
-            plans = []
-            visited = set()
-            def dfs(current, path):
-                if current in visited:
-                    return
-                visited.add(current)
-                if not current in self.transitions:
-                    plans.append(path[::-1])
-                    return
-                for src, action in self.transitions[current]:
-                    dfs(src, path + [(action, current)])
-            print("I want : ", per[0].desired_dish.ingredients[0].as_tuple())
-            print(per[0].desired_dish.ingredients)
-            for i in (per[0].desired_dish.ingredients): 
-                print(i)
-                dfs(i.as_tuple(), [])
-            self.plans = plans
-            self.current_recipe = plans[0]
+        orders = per["orders"]
+        game = per["game"]
 
+        if not orders:
+            return
+        # print("CURRENT PLANS AVANT: ", self.plans)
+        # print("CURRENT AVANT :", self.current_recipe)
+
+        # Si aucune recette en cours, on en génère une
+        if self.plans is None:
+            self.plans = self.create_plan(orders)
+            print("Nouvelle recette :", self.current_recipe)
+            self.pending_plate = Plate(orders[0].desired_dish.name)
+            return
+
+        if not self.plans:
+            if self.go_to("table"):
+                print("Recette finie !")
+                self.state = "SENDING"
+                self.target_game = game 
+            return
+
+        if self.current_recipe is None :
+            # print("Changement de sous recette")
+            self.current_recipe = self.plans[0]
+            return
+
+        # Si recette terminée → préparation de l’assiette
+        
+        if not self.current_recipe:
+            if self.go_to("table"):
+                # print("Ingrédient terminé, préparation du dressage")
+                self.state = "PLATING"
+            return
+            
+        # Sinon on suit le plan
         task = self.current_recipe[0]
-        for task in self.current_recipe:  # exemple ('fetch', ('steak', 'raw')) 
-            destinations = {"fetch": "fridge", "cook": "gas_station", "fry": "gas_station", "chop": "workbench"}
-            # A côté de la case recherchée
-            if len(self.maps.get_path(self.x, self.y, destinations[task[0]], level_index)) == 2:
-                # On est à côté d'une case de type destinations[recipe[0]]
-                if destinations[task[0]] == "fridge":
-                    self.itemWanted = task[1][0]
-                    self.state = "COLLECT"
-                else:  # On n'est pas sur un frigo, donc on fait une interaction
-                    self.itemWanted = task[1][0]
-                    self.interact(destinations[task[0]])
-                # On supprime la tâche de ce qu'il fallait faire
-                self.current_recipe = [1:]
-            else:  # On doit se rendre à la case
-                match recipe[0]:
-                # NON if chemin du go_to a une longueur de 2 : on est à côté de la case
-                
-                    case "fetch":
-                        self.go_to("fridge")
-                    case "cook":
-                        self.go_to("gas_station")
-                    case "fry":
-                        self.go_to("gas_station")
-                    case "chop":
-                        self.go_to("workbench")
-                    case _:
-                        print("On ne sait pas quoi faire")
+        action, (item_name, _) = task
+        self.itemWanted = item_name
+        self.pending_action = action
+
+        destinations = {
+            "fetch": "fridge",
+            "cook": "oven",
+            "chop": "workbench"
+        }
+
+        target = destinations.get(action)
+        if not target:
+            print("Action inconnue :", action)
+            self.state = "IDLE"
+            return
         
+        if self.go_to(target):
+            print("Prêt à interagir avec", target)
+            match self.pending_action:
+                case "fetch":
+                    self.state = "COLLECT"
+                case "cook" | "fry":
+                    self.state = "COOKING"
+                case "chop":
+                    self.state = "CHOPPING"
+                case _:
+                    print("Action inconnue :", self.pending_action)
+                    self.state = "IDLE"
+
     def action(self):
+        """Exécute concrètement l’action décidée selon l’état."""
+        # print(f"État : {self.state}, Objet tenu : {self.itemHeld}")
+        # print("CURRENT PLANS APRES: ", self.plans)
+        # print("CURRENT APRES :", self.current_recipe)
+        
         match self.state:
             case "WALKING":
                 try:
                     self.x, self.y = self.path[0]
-                    self.position = self.x*self.map_width+self.y
+                    self.position = self.x * self.map_width + self.y
                     self.rect.topleft = (self.x * self.tile_size, self.y * self.tile_size)
-                    if len(self.path) == 2:  # On s'arrête quand on est à côté de la case visée
-                        self.path = []
-                        self.state = "IDLE"
-                    else:
-                        self.path = self.path[1:]
                 except TypeError:
-                    print(f"self.path: {self.path}")
-            case "IDLE":
-                print("idle player")
-            case "COOKING":
-                if self.interact("gas_station") == 0:  # Nombre de ticks restants sur la tâche
-                    self.itemHeld.apply_action("cook")
-                    self.state = "IDLE" 
+                    print("Erreur : self.path =", self.path)
 
+            case "COLLECT":
+                if self.interact("fridge") == 0:
+                    print("Collecte :", self.itemWanted)
+                    self.itemHeld = Ingredient(self.itemWanted)
+                    self.current_recipe.pop(0)  # étape terminée
+                    self.state = "IDLE"
+            case "COOKING":
+                if self.interact("oven") == 0:
+                    self.itemHeld.apply_action("cook")
+                    self.current_recipe.pop(0)
+                    self.state = "IDLE"
             case "CHOPPING":
                 if self.interact("workbench") == 0:
                     self.itemHeld.apply_action("chop")
+                    self.current_recipe.pop(0)
                     self.state = "IDLE"
             case "PLATING":
                 if self.interact("plate") == 0:
+                    # Utilise la plate préparée dans next()
+                    self.pending_plate.add_ingr(self.itemHeld)
+                    # print("Plate après ajout : ", self.pending_plate)
+
+                    self.plans.pop(0)
+                    self.itemHeld = None
+                    self.current_recipe = None
+                    print("Ingredient déposé dans l'assiette")
                     self.state = "IDLE"
-                    # Ajouter à l'assiette l'élément dans la main
-                    self.itemHeld = None  # On vide la main
-                    # self.orders[0].remove(done_ingredient)
-            case "COLLECT":
-                if self.interact("fridge") == 0:
-                    self.itemHeld = Ingredient(self.itemWanted)  # On ajoute à l'inventaire un élément
+            case "SENDING":
+                if self.interact("plate") == 0:
+                    print("Plate envoyée : ", self.pending_plate)
+                    self.target_game.accept_plate(self.pending_plate)
+                    
+                    self.itemHeld = None
+                    self.current_recipe = None
+                    self.pending_plate = None
+                    self.plans = None
+                    print("Assiette envoyée en salle !")
                     self.state = "IDLE"
 
-                    
+            case "IDLE":
+                pass
+        
     def interact(self, target: str):
         """Interagit avec la target pendant un nombre de ticks défini"""
         if self.interaction_progress == 0:  # On appelle une interaction mais on ne fait rien actuellement : on détermine la durée de l'interaction
             match target:
-                case "gas_station":
+                case "oven":
                     self.interaction_progress = 5
                 case "workbench":
                     self.interaction_progress = 5

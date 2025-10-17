@@ -47,9 +47,10 @@ class Ingredient:
     def __repr__(self):
         return self.__str__()
     
-    @staticmethod
-    def equal(i1,i2):
-        return (i1.name == i2.name) and (i1.state == i2.state) 
+    def __eq__(self, other):
+        if isinstance(other, Ingredient):
+            return (self.name == other.name) and (self.state == other.state) 
+        return False
     
     def __hash__(self):
         return hash((self.name, self.state))

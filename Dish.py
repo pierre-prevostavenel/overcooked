@@ -22,7 +22,7 @@ class Dish:
         name, ingredients = random.choice(Dish.dishes)
         return Dish(name, ingredients)
 
-    # TODO voir pour implémenter un systéme de score plus avancé
+    # TODO voir pour implémenter un système de score plus avancé
     @staticmethod
     def equal(dish1, dish2):
         # on veut le même nb d'occ d'ingrédient dans chaque plat
@@ -34,8 +34,10 @@ class Dish:
                 else :
                     c[i] = 1
             return c
+        
         c1 = count_ingredients(dish1.ingredients)
         c2 = count_ingredients(dish2.ingredients)
+        print(c1,c2)
         return c1 == c2
 
     @staticmethod
@@ -51,6 +53,13 @@ class Dish:
                 )
                 for ing in required_ingredients
             ]
-            if(dish_name =="burger"):
-                Dish.dishes.append((dish_name, ingredients))
+            Dish.dishes.append((dish_name, ingredients))
 
+
+class Plate(Dish):
+    def __init__(self, name):
+        super().__init__(name, [])
+    def add_ingr(self, ingr):
+        self.ingredients.append(ingr)
+    def verify(self, order):
+        return Dish.equal(self, order)

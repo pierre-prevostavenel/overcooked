@@ -5,7 +5,7 @@ class Tile(MySprite):
     TILE_IMAGES = {
         "whitefloor": "assets/white_tile.png",
         "blackfloor": "assets/black_tile.png",
-        "gas_station": "assets/gas.png",
+        "oven": "assets/gas.png",
         "floor": "assets/floor.png",
         "white_sink": "assets/white_sink.png",
         "white_sink1": "assets/white_sink1.png",

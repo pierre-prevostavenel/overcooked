@@ -37,22 +37,22 @@ class Maps:
         """Charge ou définit toutes les maps ici."""
         # Exemple Map 1
         map1 = [
-            ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
-            ["workbench", "table",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "table",     "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "floor",      "floor",     "floor",    "floor",     "floor",     "workbench"],
-            ["workbench", "gas_station","floor",    "floor",    "floor",     "floor",     "floor",     "floor",     "white_sink", "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",    "workbench"],
-            ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
-            ["workbench", "fridge",     "floor",     "trash1",     "workbench",    "workbench","trash2",     "floor",     "floor",     "workbench"],
-            ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
+            ["wall", "workbench2",     "workbench2",     "workbench2",     "workbench2",     "workbench2",     "workbench2",     "workbench2",     "workbench",     "wall"],
+            ["wall", "table",     "floor",     "floor",    "floor",     "floor",     "floor",     "floor", "workbench",     "wall"],
+            ["wall", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench2",     "wall"],
+            ["wall", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "fridge",     "wall"],
+            ["wall", "trash1",    "floor",     "floor",     "floor",     "floor",     "floor",     "floor","trash2",     "wall"],
+            ["wall", "floor",     "floor",     "floor",     "floor",     "workbench2",     "workbench2",     "workbench2",     "workbench2",     "wall"],
+            ["wall", "floor","floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "wall"],
+            ["wall", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",    "floor",     "wall"],
+            ["wall", "white_sink",     "floor",     "trash1",     "floor",     "floor",     "floor",     "floor",     "oven",     "wall"],
+            ["wall", "wall",     "wall",     "wall",     "wall",     "wall",     "wall",     "wall",     "wall",     "wall"],
         ]
 
         # Exemple Map 2
         map2 = [["blackfloor"]*10 for _ in range(10)]
         map2[1][1] = "whitefloor"
-        map2[3][1] = "gas_station"
+        map2[3][1] = "oven"
 
         self.levels.append(map1)
         self.levels.append(map2)
@@ -108,7 +108,7 @@ class Maps:
 
         return nearest_coords
 
-    def get_path(self, from_x, from_y, tile, map_index):
+    def get_path(self, from_x, from_y, tile, map_index=0):
         """
         Calcule le chemin le plus court en utilisant l'algorithme A*.
         Renvoie une liste de tuples (x, y) représentant les coordonnées des cases du chemin.

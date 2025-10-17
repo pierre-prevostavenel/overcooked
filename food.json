@@ -2,7 +2,7 @@
   "ingredients": {
     "tomato": {
       "raw": {
-        "cut": { "name": "tomato", "state": "chopped" }
+        "chop": { "name": "tomato", "state": "chopped" }
       }
     },
     "steak": {
@@ -11,12 +11,30 @@
       }
     },
     "lettuce": {
-        "raw": {
-            "cut": { "name": "lettuce", "state": "chopped" }
-        }
+      "raw": {
+        "chop": { "name": "lettuce", "state": "chopped" }
+      }
     },
     "bun": {
       "raw": {}
+    },
+    "cheese": {
+      "raw": {}
+    },
+    "onion": {
+      "raw": {
+        "chop": { "name": "onion", "state": "chopped" }
+      }
+    },
+    "egg": {
+      "raw": {
+        "cook": { "name": "egg", "state": "fried" }
+      }
+    },
+    "bacon": {
+      "raw": {
+        "cook": { "name": "bacon", "state": "cooked" }
+      }
     }
   },
   "dish": {
@@ -27,6 +45,22 @@
     "burger": [
       { "name": "steak", "state": "cooked" },
       { "name": "bun", "state": "raw" },
+      { "name": "tomato", "state": "chopped" }
+    ],
+    "cheeseburger": [
+      { "name": "steak", "state": "cooked" },
+      { "name": "bun", "state": "raw" },
+      { "name": "cheese", "state": "raw" },
+      { "name": "tomato", "state": "chopped" }
+    ],
+    "omelette": [
+      { "name": "egg", "state": "fried" },
+      { "name": "cheese", "state": "raw" },
+      { "name": "onion", "state": "chopped" }
+    ],
+    "bacon_salad": [
+      { "name": "bacon", "state": "cooked" },
+      { "name": "lettuce", "state": "chopped" },
       { "name": "tomato", "state": "chopped" }
     ]
   }
