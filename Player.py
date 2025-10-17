@@ -126,9 +126,26 @@ class Player(pygame.sprite.Sprite):
                 if self.interact("food_generatir") == 0:
                     self.state = "IDLE"
                     
-    def interact(self, target: str, time: int):
+    def interact(self, target: str):
         """Interagit avec la target pendant un nombre de ticks défini"""
-        pass
+        if self.interaction_progress == 0:  # On appelle une interaction mais on ne fait rien actuellement : on détermine la durée de l'interaction
+            match target:
+                case "gas_station":
+                    self.interaction_progress = 5
+                case "workbench":
+                    self.interaction_progress = 5
+                case "plate":
+                    self.interaction_progress = 1
+                case _:
+                    print("Erreur : interaction avec élément inconnu")
+                    self.interaction_progress = 5
+            return self.interaction_progress
+        else:  # Une interaction est en cours, donc on la continue
+            self.interaction_progress -= 1
+            if self.interaction_progress < 0: self.interaction_progress = 0  # Sécurité normalement non nécessaire
+            return self.interaction_progress  # On retourne le nombre de ticks restants (0 = fini)
+
+
 
     def draw(self, surface):
         """Dessine le joueur sur la surface donnée."""
