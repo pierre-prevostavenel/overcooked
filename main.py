@@ -13,7 +13,7 @@ from GameState import GameState
 
 class Game:
     score=0
-    def __init__(self, screen_width=1000, screen_height=1000):
+    def __init__(self, screen_width=720, screen_height=720):
 
         pygame.init()
         self.screen_width = screen_width
