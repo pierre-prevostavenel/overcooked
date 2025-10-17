@@ -1,6 +1,6 @@
 from Ingredient import Ingredient
-from Action import *
 import random
+import json
 
 from Ingredient import Ingredient
 class Dish:

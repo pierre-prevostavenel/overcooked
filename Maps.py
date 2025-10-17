@@ -45,7 +45,7 @@ class Maps:
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",    "workbench"],
             ["workbench", "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "floor",     "workbench"],
-            ["workbench", "floor",     "floor",     "trash1",     "workbench",    "workbench","trash2",     "floor",     "floor",     "workbench"],
+            ["workbench", "fridge",     "floor",     "trash1",     "workbench",    "workbench","trash2",     "floor",     "floor",     "workbench"],
             ["workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench", "workbench"],
         ]
 

@@ -12,6 +12,7 @@ from GameState import GameState
 
 class Game:
     def __init__(self, screen_width=720, screen_height=720):
+        
         pygame.init()
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -81,7 +82,10 @@ class Game:
                     self.next_level()
 
     def update(self):
-        self.all_sprites.update()
+        self.all_sprites.update(self)
+
+    def get_orders(self):
+        return self.orders
 
     def updateOrders(self):
         for o in self.orders[:]:  
@@ -96,9 +100,7 @@ class Game:
             print("Nouvelle commandes ! " + order.__str__())
             self.orders.append(order)
             print(f"Total commande : {len(self.orders)}")
-            
-        
-        
+
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
