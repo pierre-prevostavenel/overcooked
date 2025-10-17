@@ -18,6 +18,7 @@ class Ingredient:
         return list(self.transformations.keys())
 
     def as_tuple(self):
+        print("burh")
         return (self.name, self.state)
 
     def __str__(self):

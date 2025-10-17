@@ -10,6 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.maps = maps
         self.x =x
         self.y = y
+        
         self.orders = []
         self.position = y * self.map_width + x
         self.manual_control = False
@@ -24,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.interaction_progress = 0
 
         self.itemHeld = None
+        self.plans = []
 
         try:
             self.image = pygame.image.load("assets/player.png").convert_alpha()
@@ -41,7 +43,8 @@ class Player(pygame.sprite.Sprite):
         self.move_timer += 1
         self.move_timer %=30
         if self.move_timer == 0:
-            print("i see :",self.see())
+            if len(self.plans) == 0:
+                print("i see :",self.see())
             self.action()
     
     def init_transitions(self, json_path):
@@ -90,8 +93,12 @@ class Player(pygame.sprite.Sprite):
             for src, action in self.transitions[current]:
                 dfs(src, path + [(action, current)])
         print("I want : ", self.orders[0].desired_dish.ingredients[0].as_tuple())
-        dfs(self.orders[0].desired_dish.ingredients[0].as_tuple(), [])
-        return plans 
+        print(self.orders[0].desired_dish.ingredients)
+        for i in (self.orders[0].desired_dish.ingredients): 
+            print(i)
+            dfs(i.as_tuple(), [])
+        self.plans = plans
+        print(self.plans)
 
 
 
