@@ -1,14 +1,25 @@
 import pygame
-from Player import Player
-from Maps import Maps
+import sys
+from pygame.sprite import LayeredUpdates
+from player.Player import Player
+from maps.Maps import Maps
 from random import randint
-from Order import Order
-from Dish import Dish
-from GameState import GameState
+from food.Order import Order
+from food.Dish import *
+from food.Ingredient import *
+from utils.GameState import GameState
 
 class Game:
+    score=0
     def __init__(self, screen_width=720, screen_height=720):
+
         pygame.init()
+
+        json_path = os.path.join(os.path.dirname(__file__)+"/food", "food.json")
+        Ingredient.init(json_path)
+        Dish.init(json_path)
+        
+
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen = pygame.display.set_mode((screen_width, screen_height))
@@ -23,22 +34,20 @@ class Game:
         for row in self.maps.grid:
             for tile in row:
                 self.all_sprites.add(tile)
-                print(f"Added tile at ({tile.row}, {tile.col}) of type '{tile.tile_type}'")
+                #print(f"Added tile at ({tile.row}, {tile.col}) of type '{tile.tile_type}'")
 
         self.gameState = GameState()
-        Dish.init()  # Dish s'occupe de charger le JSON
-        self.orders = []
 
-        self.player = Player(self.maps, tile_size=self.tile_size)
+
+
+        self.orders = [Order(60)]
+
+        self.player = Player(json_path, tile_size=self.tile_size)
         self.all_sprites.add(self.player)
-        self.player.set_order(self.orders)
-
-        # Buttons si tu veux les garder
-        self.font = pygame.font.SysFont("arial", 20)
-        self.prev_button = pygame.Rect(10, screen_height - 40, 100, 30)
-        self.next_button = pygame.Rect(screen_width - 110, screen_height - 40, 100, 30)
 
         self.running = True
+
+        self.score = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -77,37 +86,51 @@ class Game:
                     print("Bouton suivant désactivé")
 
     def update(self):
-        self.all_sprites.update()
+        self.all_sprites.update(self)
+
+    def get_orders(self):
+        return self.orders
+    
+    def get_maps(self):
+        return self.maps
+
+    def accept_plate(self,plate):
+        print("Resultat accept plate : ", plate.verify(self.orders[0].desired_dish))
+        if(plate.verify(self.orders[0].desired_dish)):
+            self.score +=1 
+            print("COMMANDE REUSSIE ! score actuel : ", self.score)
+            self.orders.remove(self.orders[0])
+            return True
+        print("Commande ratée :/ ! " + self.orders[0].__str__(), "plate ", plate)
+        self.orders.remove(self.orders[0])
+        return False
 
     def updateOrders(self):
         for o in self.orders[:]:
             if not o.update():
                 self.orders.remove(o)
                 self.gameState.fail_order()
-                print("Commande ratée :/ " + str(o))
+                print("Commande ratée ! L'agent a perdu " + o.__str__())
+                sys.exit("Commande ratée, l'agent a perdu.")
                 
-        if randint(1, 100) <= 1:
-            order = Order(30)
-            print("Nouvelle commande ! " + str(order))
+        #TODO voir pour faire "scale" la difficulté
+        if randint(1, 600) <= 1: #en moyenne 1 commande toute les 10 secondes
+            order = Order(60) #possible de changer le temps restant pour une commande
+            #print("Nouvelle commandes ! " + order.__str__())
             self.orders.append(order)
-            print(f"Total commandes : {len(self.orders)}")
-        
+            #print(f"Total commande : {len(self.orders)}")
+
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
-        self.player.draw(self.screen)  # ← ici, draw() sera exécuté
-        self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
-        self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
-        Order.draw_orders(self.screen, self.orders, self.font)
+
+        # Changement de map (plus utilisé)
+        # self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
+        # self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
+        Order.draw_orders(self.screen, self.orders, pygame.font.SysFont("arial", 20))
         pygame.display.flip()
 
     def run(self):
-        # Par défaut, aller à la première station si nécessaire
-        
-        fridge_tile = self.maps.grid[9][8]
-        oven_tile = self.maps.grid[5][5]
-        self.player.targets = [fridge_tile, oven_tile]
-
         while self.running:
             self.handle_events()
             self.updateOrders()

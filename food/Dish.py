@@ -1,6 +1,6 @@
 import json
 import random
-from Ingredient import Ingredient
+from food.Ingredient import Ingredient
 import os
 
 class Dish:
@@ -18,6 +18,7 @@ class Dish:
         name, ingredients = random.choice(Dish.dishes)
         return Dish(name, ingredients)
 
+    # TODO voir pour implémenter un système de score plus avancé
     @staticmethod
     def equal(dish1, dish2):
         """Compare le nombre d’occurrences de chaque ingrédient"""
@@ -26,12 +27,15 @@ class Dish:
             for i in ingredients:
                 c[i] = c.get(i, 0) + 1
             return c
-        return count_ingredients(dish1.ingredients) == count_ingredients(dish2.ingredients)
+        
+        c1 = count_ingredients(dish1.ingredients)
+        c2 = count_ingredients(dish2.ingredients)
+        print(c1,c2)
+        return c1 == c2
 
     @staticmethod
-    def init():
+    def init(json_path):
         """Charge tous les plats depuis food.json automatiquement"""
-        json_path = os.path.join(os.path.dirname(__file__), "food.json")
         with open(json_path, "r") as f:
             data = json.load(f)
 
@@ -42,3 +46,23 @@ class Dish:
                 for ing in dish_data.get("ingredients", [])
             ]
             Dish.dishes.append((dish_name, ingredients))
+        
+        # V2
+        # for dish_name, required_ingredients in data["dish"].items():
+        #     ingredients = [
+        #         Ingredient(
+        #             ing["name"],
+        #             ing["state"]
+        #         )
+        #         for ing in required_ingredients
+        #     ]
+        #     Dish.dishes.append((dish_name, ingredients))
+
+
+class Plate(Dish):
+    def __init__(self, name):
+        super().__init__(name, [])
+    def add_ingr(self, ingr):
+        self.ingredients.append(ingr)
+    def verify(self, order):
+        return Dish.equal(self, order)

@@ -1,4 +1,4 @@
-from MySprite import MySprite
+from utils.MySprite import MySprite
 
 class Item(MySprite):
 

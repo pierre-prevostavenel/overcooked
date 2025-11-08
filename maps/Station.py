@@ -1,6 +1,6 @@
 # Station.py
-from Ingredient import Ingredient
-from Tile import Tile
+from food.Ingredient import Ingredient
+from maps.Tile import Tile
 
 class Station(Tile):
     """Base class pour les stations."""

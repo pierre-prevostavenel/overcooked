@@ -1,9 +1,8 @@
 import json
-from Item import Item
+from maps.Item import Item
 
 # Charger le JSON une seule fois
-with open("food.json") as f:
-    FOOD_DATA = json.load(f)["ingredients"]
+FOOD_DATA = None
 
 class Ingredient(Item):
     def __init__(self, name: str, state: str = "raw", rect=(0, 0, 50, 50), fallback_color=(255, 255, 255), layer=0):
@@ -12,6 +11,15 @@ class Ingredient(Item):
         self.state = state
 
     @staticmethod
+    def init(json_path):
+        print("BRUH")
+        """Charge tous les plats depuis food.json automatiquement"""
+        global FOOD_DATA
+        with open(json_path, "r") as f:
+            FOOD_DATA = json.load(f)["ingredients"]
+
+    @staticmethod
+    #TODO WTF IS GOING ON HERE
     def _get_image_path(name, state):
         print("get image path for", name, state)
         """Récupère le path d'image correspondant à l'ingrédient et à son état depuis le JSON"""
@@ -56,3 +64,14 @@ class Ingredient(Item):
 
     def __str__(self):
         return f"{self.name} ({self.state})"
+    
+    def __repr__(self):
+        return self.__str__()
+    
+    def __eq__(self, other):
+        if isinstance(other, Ingredient):
+            return (self.name == other.name) and (self.state == other.state) 
+        return False
+    
+    def __hash__(self):
+        return hash((self.name, self.state))

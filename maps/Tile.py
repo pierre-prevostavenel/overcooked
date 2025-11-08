@@ -1,12 +1,12 @@
 # Tile.py
 import pygame
-from MySprite import MySprite
+from utils.MySprite import MySprite
 
 class Tile(MySprite):
     TILE_IMAGES = {
         "whitefloor": "assets/white_tile.png",
         "blackfloor": "assets/black_tile.png",
-        "gas_station": "assets/gas.png",
+        "oven": "assets/gas.png",
         "floor": "assets/floor.png",
         "fridge": "assets/fridge.png",
         "workbench": "assets/workbench.png",

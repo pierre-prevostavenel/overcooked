@@ -1,4 +1,4 @@
-from Dish import Dish
+from food.Dish import Dish
 import pygame
 
 class Order:
@@ -19,6 +19,9 @@ class Order:
     
     def __str__(self):
         return "je commande : " + self.desired_dish.__str__()
+    
+    def __repr__(self):
+        return self.desired_dish.__str__()
 
     @staticmethod
     def draw_orders(surface, orders, font, x=10, y=10):
