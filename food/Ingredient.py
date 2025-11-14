@@ -12,7 +12,6 @@ class Ingredient(Item):
 
     @staticmethod
     def init(json_path):
-        print("BRUH")
         """Charge tous les plats depuis food.json automatiquement"""
         global FOOD_DATA
         with open(json_path, "r") as f:

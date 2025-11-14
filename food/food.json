@@ -85,6 +85,16 @@
           "actions": {}
         }
       ]
+    },
+    {
+      "name": "fries",
+      "states": [
+        {
+          "state": "cooked",
+          "image": "fries.png",
+          "actions": {}
+        }
+      ]
     }
   ],
   "dishes": [
@@ -101,6 +111,15 @@
         {"name": "steak", "state": "cooked"},
         {"name": "bun", "state": "raw"},
         {"name": "tomato", "state": "chopped"}
+      ]
+    },
+    {
+      "name": "burger&Fries",
+      "ingredients": [
+        {"name": "steak", "state": "cooked"},
+        {"name": "bun", "state": "raw"},
+        {"name": "tomato", "state": "chopped"},
+        {"name": "fries", "state": "cooked"}
       ]
     }
   ]
