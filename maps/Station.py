@@ -1,121 +1,116 @@
-# Station.py
 from food.Ingredient import Ingredient
 from maps.Tile import Tile
 
 class Station(Tile):
-    """Base class pour les stations.
-
-    interact(player) now implements a simple interaction countdown using
-    `player.interaction_progress`. On the first call it sets the duration
-    according to the station action (fetch/cook/chop/plate). Subsequent calls
-    decrement the counter and when it reaches 0 the station's `perform`
-    method is called to apply the effect (e.g. fridge spawns an ingredient,
-    oven cooks an ingredient).
-
-    The return value of `interact` is the remaining ticks (int). 0 means the
-    action has just completed (and `perform` was executed).
-    """
     def __init__(self, row, col, name, action, tile_size=50):
         self.name = name
-        self.action = action  # "cook", "fetch", "chop"...
+        self.action = action  # "cook", "fetch", "chop", "plate"…
+        self.itemHeld = None  # Objet actuellement sur la station
         super().__init__(row, col, tile_type=name, tile_size=tile_size)
-        
 
     def interact(self, player):
-        """Handle timed interaction and return remaining ticks.
-
-        - On first call (player.interaction_progress == 0) this sets the
-          interaction duration based on the station action and returns it.
-        - On subsequent calls it decrements the counter and when it reaches
-          0 calls ``self.perform(player)`` and returns 0.
-
-        This design keeps timing state on the player (so a player can only
-        perform a single interaction at a time) while allowing stations to
-        define their final effect by overriding `perform`.
-        """
-        # default durations (ticks) per action
+        """Interaction classique pour les stations qui stockent l’objet."""
         durations = {
             "fetch": 1,
             "cook": 5,
             "chop": 5,
             "plate": 1,
+            "wash": 5,
         }
 
-        # If no interaction in progress, start one and return duration
         if getattr(player, "interaction_progress", 0) == 0:
             player.interaction_progress = durations.get(self.action, 5)
+            if self.action != "fetch":  # fetch est réservé à la Fridge
+                self.itemHeld = player.itemHeld
+                player.itemHeld = None
             return player.interaction_progress
 
-        # Otherwise continue the interaction (decrement)
         player.interaction_progress -= 1
         if player.interaction_progress < 0:
             player.interaction_progress = 0
 
-        # If finished, perform station-specific effect and return 0
         if player.interaction_progress == 0:
             try:
                 self.perform(player)
+                if self.action != "fetch":  # restituer l'objet sauf pour la Fridge
+                    player.itemHeld = self.itemHeld
+                    self.itemHeld = None
             except Exception as e:
                 print(f"Error performing action on {self.name}: {e}")
             return 0
 
-        # Still in progress: return remaining ticks
         return player.interaction_progress
 
     def perform(self, player):
+        """À surcharger pour l'effet final de la station."""
         return
+    
+    def draw(self, surface):
+        # dessine la tuile de base (Tile)
+        surface.blit(self.image, self.rect.topleft)
+        
+        # si la station a un itemHeld, le dessiner au centre
+        if self.itemHeld is not None:
+            item_rect = self.itemHeld.image.get_rect(center=self.rect.center)
+            surface.blit(self.itemHeld.image, item_rect.topleft)
 
+
+# Stations spécifiques
 class Workbench(Station):
     def __init__(self, row, col, tile_size=50):
-        super().__init__(row, col, "workbench", action="cook", tile_size=tile_size)
-
-class Fridge(Station):
-    def __init__(self, row, col, tile_size=50):
-        super().__init__(row, col, "fridge", action="fetch", tile_size=tile_size)
-
-    def perform(self, player):
-        """Create the Ingredient when the interaction finishes and give it to
-        the player.
-        """
-        if player.itemWanted is not None:
-            ingredient_obj = Ingredient(player.itemWanted, "raw")
-            player.grab(ingredient_obj)
-            print(f"Fridge gave {ingredient_obj} to {player}")
+        super().__init__(row, col, "workbench", action="chop", tile_size=tile_size)
 
 class Oven(Station):
     def __init__(self, row, col, tile_size=50):
         super().__init__(row, col, "oven", action="cook", tile_size=tile_size)
 
     def perform(self, player):
-        """Called when cooking completes: try to cook the held ingredient.
-        """
         if player.itemHeld is not None:
-            ingredient = player.itemHeld
-            cooked_ingredient = ingredient.cook()
-            if cooked_ingredient:
-                player.itemHeld = cooked_ingredient
-                print(f"{player} cooked {ingredient} into {cooked_ingredient} at the gas station.")
-                print(f"{player} now holds {player.itemHeld}.")
+            cooked = player.itemHeld.cook()
+            if cooked:
+                player.itemHeld = cooked
+                print(f"{player} cooked the ingredient into {cooked}.")
             else:
-                print(f"{ingredient} cannot be cooked.")
-        else:
-            print(f"{player} has nothing to cook.")
+                print(f"{player.itemHeld} cannot be cooked.")
 
-class WhiteSink(Station): # [ATTENTION] full IA pour l instant
+class WhiteSink(Station):
     def __init__(self, row, col, tile_size=50):
         super().__init__(row, col, "white_sink", action="wash", tile_size=tile_size)
 
     def perform(self, player):
-        """Called when washing completes: try to wash the held ingredient.
-        """
         if player.itemHeld is not None:
-            ingredient = player.itemHeld
-            washed_ingredient = ingredient.wash()
-            if washed_ingredient:
-                player.itemHeld = washed_ingredient
-                print(f"{player} washed {ingredient} into {washed_ingredient} at the sink.")
-                print(f"{player} now holds {player.itemHeld}.")
+            washed = player.itemHeld.wash()
+            if washed:
+                player.itemHeld = washed
+                print(f"{player} washed the ingredient into {washed}.")
             else:
-                print(f"{ingredient} cannot be washed.")
-        else:
-            print(f"{player} has nothing to wash.")
+                print(f"{player.itemHeld} cannot be washed.")
+
+class Fridge(Station):
+    def __init__(self, row, col, tile_size=50):
+        super().__init__(row, col, "fridge", action="fetch", tile_size=tile_size)
+
+    def interact(self, player):
+        """Fridge spéciale : donne directement l'ingrédient au player."""
+        durations = {"fetch": 1}
+        if getattr(player, "interaction_progress", 0) == 0:
+            player.interaction_progress = durations["fetch"]
+            return player.interaction_progress
+
+        player.interaction_progress -= 1
+        if player.interaction_progress < 0:
+            player.interaction_progress = 0
+
+        if player.interaction_progress == 0:
+            self.perform(player)
+            return 0
+
+        return player.interaction_progress
+
+    def perform(self, player):
+        if player.itemWanted:
+            ingredient_obj = Ingredient(player.itemWanted, "raw")
+            player.grab(ingredient_obj)
+            print(f"Fridge gave {ingredient_obj} to {player}.")
+        # Fridge ne stocke rien
+        self.itemHeld = None

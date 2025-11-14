@@ -8,6 +8,7 @@ from food.Order import Order
 from food.Dish import *
 from food.Ingredient import *
 from utils.GameState import GameState
+from maps.Station import Station
 
 class Game:
     score=0
@@ -124,6 +125,9 @@ class Game:
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
         self.player.draw(self.screen)
+        for sprite in self.all_sprites:
+            if isinstance(sprite, Station):
+                sprite.draw(self.screen)
 
         # Changement de map (plus utilisé)
         # self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
