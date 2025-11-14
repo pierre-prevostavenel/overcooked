@@ -37,10 +37,8 @@ class Game:
                 #print(f"Added tile at ({tile.row}, {tile.col}) of type '{tile.tile_type}'")
 
         self.gameState = GameState()
-
-
-
         self.orders = [Order(60)]
+
 
         self.player = Player(json_path, tile_size=self.tile_size)
         self.all_sprites.add(self.player)
@@ -125,9 +123,6 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.player.draw(self.screen)
 
-        # Changement de map (plus utilisé)
-        # self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))
-        # self.screen.blit(self.font.render("Suivant", True, (255,255,255)), (self.next_button.x+20, self.next_button.y+8))
         Order.draw_orders(self.screen, self.orders, pygame.font.SysFont("arial", 20))
         pygame.display.flip()
 
