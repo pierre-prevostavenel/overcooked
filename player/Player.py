@@ -69,11 +69,10 @@ class Player(pygame.sprite.Sprite):
         orders = per["orders"]
         game = per["game"]
         map = per["map"]
-        print("ORDERS RECEIVED IN NEXT: ", orders)
         if not orders:
             return
-        print("CURRENT PLANS AVANT: ", self.plans)
-        print("CURRENT AVANT :", self.current_recipe)
+        # print("CURRENT PLANS AVANT: ", self.plans)
+        # print("CURRENT AVANT :", self.current_recipe)
 
         # Si aucune recette en cours, on en génère une
         if self.plans is None:
@@ -312,7 +311,6 @@ class Player(pygame.sprite.Sprite):
         return station.interact(self)
 
     def draw(self, surface):
-        surface.blit(self.image, self.rect.topleft)
         if self.itemHeld is not None:
             item_rect = self.itemHeld.image.get_rect(center=self.rect.center)
             surface.blit(self.itemHeld.image, item_rect.topleft)

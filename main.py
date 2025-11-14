@@ -123,6 +123,7 @@ class Game:
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
+        self.player.draw(self.screen)
 
         # Changement de map (plus utilisé)
         # self.screen.blit(self.font.render("Précédent", True, (255,255,255)), (self.prev_button.x+10, self.prev_button.y+8))

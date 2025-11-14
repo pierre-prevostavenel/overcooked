@@ -19,6 +19,7 @@ class Station(Tile):
         self.name = name
         self.action = action  # "cook", "fetch", "chop"...
         super().__init__(row, col, tile_type=name, tile_size=tile_size)
+        
 
     def interact(self, player):
         """Handle timed interaction and return remaining ticks.
@@ -99,3 +100,22 @@ class Oven(Station):
                 print(f"{ingredient} cannot be cooked.")
         else:
             print(f"{player} has nothing to cook.")
+
+class WhiteSink(Station): # [ATTENTION] full IA pour l instant
+    def __init__(self, row, col, tile_size=50):
+        super().__init__(row, col, "white_sink", action="wash", tile_size=tile_size)
+
+    def perform(self, player):
+        """Called when washing completes: try to wash the held ingredient.
+        """
+        if player.itemHeld is not None:
+            ingredient = player.itemHeld
+            washed_ingredient = ingredient.wash()
+            if washed_ingredient:
+                player.itemHeld = washed_ingredient
+                print(f"{player} washed {ingredient} into {washed_ingredient} at the sink.")
+                print(f"{player} now holds {player.itemHeld}.")
+            else:
+                print(f"{ingredient} cannot be washed.")
+        else:
+            print(f"{player} has nothing to wash.")

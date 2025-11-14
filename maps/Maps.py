@@ -1,6 +1,6 @@
 # Maps.py
 from maps.Tile import Tile
-from maps.Station import Workbench, Fridge, Oven
+from maps.Station import *
 
 class Maps:
     """Grille unique construite directement avec Tiles et Stations."""
@@ -37,5 +37,7 @@ class Maps:
                     self.grid[r][c] = Fridge(r, c, self.tile_size)
                 elif cell == "oven":
                     self.grid[r][c] = Oven(r, c, self.tile_size)
+                elif cell == "white_sink":
+                    self.grid[r][c] = WhiteSink(r, c, self.tile_size)
                 else:
                     self.grid[r][c] = Tile(r, c, cell, self.tile_size)
