@@ -10,6 +10,7 @@ class Tile(MySprite):
         "floor": "assets/floor.png",
         "fridge": "assets/fridge.png",
         "workbench": "assets/workbench.png",
+        "workbench2": "assets/workbench2.png",
         "table": "assets/table.png",
         "trash1": "assets/trash1.png",
         "trash2": "assets/trash2.png",
