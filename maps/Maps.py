@@ -1,6 +1,6 @@
 # Maps.py
 from maps.Tile import Tile
-from maps.Station import Workbench, Fridge, GasStation
+from maps.Station import Workbench, Fridge, Oven
 
 class Maps:
     """Grille unique construite directement avec Tiles et Stations."""
@@ -14,16 +14,16 @@ class Maps:
     def _build_map(self):
         """Map labyrinthe : Workbench = mur, floor = chemin, Fridge = objectif"""
         layout = [
-            ["Workbench","Workbench","Workbench","Workbench","Workbench","Workbench","Workbench","Workbench","Workbench","Workbench"],
-            ["Workbench","floor",    "floor",    "floor",    "Workbench","floor",    "floor",    "floor",    "floor",    "Workbench"],
-            ["Workbench","floor",    "Workbench","floor",    "Workbench","floor",    "Workbench","Workbench","floor",    "Workbench"],
-            ["Workbench","floor",    "Workbench","floor",    "floor",    "floor",    "Workbench","floor",    "floor",    "Workbench"],
-            ["Workbench","floor",    "Workbench","Workbench","Workbench","floor",    "Workbench","floor",    "Workbench","Workbench"],
-            ["Workbench","floor",    "floor",    "floor",    "Workbench","gas_station",    "Workbench","floor",    "floor",    "Workbench"],
-            ["Workbench","Workbench","Workbench","floor",    "Workbench","floor",    "Workbench","Workbench","floor",    "Workbench"],
-            ["Workbench","floor",    "floor",    "floor",    "floor",    "floor",    "floor",    "Workbench","floor",    "Workbench"],
-            ["Workbench","floor",    "Workben0ch","Workbench","Workbench","Workbench","floor",    "Workbench","floor",    "Workbench"],
-            ["Workbench","floor",    "floor",    "floor",    "floor",    "floor",    "floor",    "floor",    "Fridge",   "Workbench"]
+            ["wall", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench", "wall"],
+            ["wall", "table", "floor", "floor", "floor", "floor", "floor", "floor", "workbench", "wall"],
+            ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "workbench2", "wall"],
+            ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "fridge", "wall"],
+            ["wall", "trash1", "floor", "floor", "floor", "floor", "floor", "floor","trash2", "wall"],
+            ["wall", "floor", "floor", "floor", "floor", "workbench2", "workbench2", "workbench2", "workbench2", "wall"],
+            ["wall", "floor","floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "white_sink", "floor", "trash1", "floor", "floor", "floor", "floor", "oven", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
         ]
 
         for r in range(self.height):
@@ -31,9 +31,11 @@ class Maps:
                 cell = layout[r][c]
                 if cell == "floor":
                     self.grid[r][c] = Tile(r, c, "floor", self.tile_size)
-                elif cell == "Workbench":
+                elif cell == "workbench":
                     self.grid[r][c] = Workbench(r, c, self.tile_size)
-                elif cell == "Fridge":
+                elif cell == "fridge":
                     self.grid[r][c] = Fridge(r, c, self.tile_size)
-                elif cell == "gas_station":
-                    self.grid[r][c] = GasStation(r, c, self.tile_size)
+                elif cell == "oven":
+                    self.grid[r][c] = Oven(r, c, self.tile_size)
+                else:
+                    self.grid[r][c] = Tile(r, c, cell, self.tile_size)

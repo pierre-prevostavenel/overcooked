@@ -69,11 +69,11 @@ class Player(pygame.sprite.Sprite):
         orders = per["orders"]
         game = per["game"]
         map = per["map"]
-
+        print("ORDERS RECEIVED IN NEXT: ", orders)
         if not orders:
             return
-        # print("CURRENT PLANS AVANT: ", self.plans)
-        # print("CURRENT AVANT :", self.current_recipe)
+        print("CURRENT PLANS AVANT: ", self.plans)
+        print("CURRENT AVANT :", self.current_recipe)
 
         # Si aucune recette en cours, on en génère une
         if self.plans is None:
@@ -150,22 +150,11 @@ class Player(pygame.sprite.Sprite):
                 except TypeError:
                     print("Erreur : self.path =", self.path)
 
-            case "COLLECT":
-                if self.interact("fridge") == 0:
-                    print("Collecte :", self.itemWanted)
-                    self.itemHeld = Ingredient(self.itemWanted)
-                    self.current_recipe.pop(0)  # étape terminée
-                    self.state = "IDLE"
-            case "COOKING":
-                if self.interact("oven") == 0:
-                    self.itemHeld.apply_action("cook")
+            case "COLLECT"|"COOKING"|"CHOPPING":
+                if self.interact(self.target_station) == 0:
                     self.current_recipe.pop(0)
                     self.state = "IDLE"
-            case "CHOPPING":
-                if self.interact("workbench") == 0:
-                    self.itemHeld.apply_action("chop")
-                    self.current_recipe.pop(0)
-                    self.state = "IDLE"
+
             case "PLATING":
                 if self.interact("plate") == 0:
                     # Utilise la plate préparée dans next()
@@ -177,6 +166,7 @@ class Player(pygame.sprite.Sprite):
                     self.current_recipe = None
                     print("Ingredient déposé dans l'assiette")
                     self.state = "IDLE"
+
             case "SENDING":
                 if self.interact("plate") == 0:
                     print("Plate envoyée : ", self.pending_plate)
@@ -232,13 +222,19 @@ class Player(pygame.sprite.Sprite):
     
     def go_to(self, map, target: str):
         """Prepare le bot à se déplacer vers target, renvoi si il est arrivé à destination ou non"""
+        self.target_station = self.get_nearest(map, target)
+        if self.target_station is None:
+            print(f"Erreur : {target} introuvable sur la map")
+            self.state = "IDLE"
+            return False
+        
+        self.path = self.get_path(map, self.target_station)
         if self.path is None:
             print(f"Erreur : chemin vers {target.tile_type} non trouvé")
             self.state = "IDLE"
         else:
             self.state = "WALKING"
-            self.path = self.get_path(map, self.get_nearest(map, target))
-        return len(self.path) == 0
+        return len(self.path) == 0   
     
     def get_nearest(self, map, tile_type):
         nearest = None
@@ -299,42 +295,27 @@ class Player(pygame.sprite.Sprite):
         else:
             print(f"{self} cannot pick up item; hands are full.")
         
-    def interact(self, station: Station, ingredient_name="potato", state="raw"):
+    def interact(self, station: Station):
         """
         Laisse le Fridge créer l'Ingredient au moment de l'interaction.
         ingredient_name et state sont juste des paramètres pour l'état initial.
         """
-        if isinstance(station, Fridge):
-            station.interact(self, ingredient_name, state)
-        else:
-            station.interact(self)
+        #TODO : faire une station Table pour gérer le plating et l'envoi en salle
+        if(station == "plate"):
+            if self.itemHeld is None:
+                print(f"{self} has nothing to interact with the plate.")
+                return 0
+            else:
+                print(f"{self} is interacting with the plate holding {self.itemHeld}.")
+                return 0  # Interaction instantanée pour le plating/sending
+            
+        return station.interact(self)
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
         if self.itemHeld is not None:
             item_rect = self.itemHeld.image.get_rect(center=self.rect.center)
             surface.blit(self.itemHeld.image, item_rect.topleft)
-
-    # def interact(self, target: str):
-    #     """Interagit avec la target pendant un nombre de ticks défini"""
-    #     if self.interaction_progress == 0:  # On appelle une interaction mais on ne fait rien actuellement : on détermine la durée de l'interaction
-    #         match target:
-    #             case "oven":
-    #                 self.interaction_progress = 5
-    #             case "workbench":
-    #                 self.interaction_progress = 5
-    #             case "plate":
-    #                 self.interaction_progress = 1
-    #             case "fridge":
-    #                 self.interaction_progress = 1
-    #             case _:
-    #                 print("Erreur : interaction avec élément inconnu")
-    #                 self.interaction_progress = 5
-    #         return self.interaction_progress
-    #     else:  # Une interaction est en cours, donc on la continue
-    #         self.interaction_progress -= 1
-    #         if self.interaction_progress < 0: self.interaction_progress = 0  # Sécurité normalement non nécessaire
-    #         return self.interaction_progress  # On retourne le nombre de ticks restants (0 = fini)
 
 
 class Node:
