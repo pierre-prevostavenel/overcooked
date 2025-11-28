@@ -69,6 +69,21 @@ class Workbench(Station):
     def __init__(self, row, col, tile_size=50):
         super().__init__(row, col, "workbench", action="cook", tile_size=tile_size)
 
+    def perform(self, player):
+        """Called when chop completes: try to chop the held ingredient.
+        """
+        if player.itemHeld is not None:
+            ingredient = player.itemHeld
+            chopped_ingredient = ingredient.chop()
+            if chopped_ingredient:
+                player.itemHeld = chopped_ingredient
+                print(f"{player} chopped {ingredient} into {chopped_ingredient} at the gas station.")
+                print(f"{player} now holds {player.itemHeld}.")
+            else:
+                print(f"{ingredient} cannot be chopped.")
+        else:
+            print(f"{player} has nothing to chop.")
+
 class Fridge(Station):
     def __init__(self, row, col, tile_size=50):
         super().__init__(row, col, "fridge", action="fetch", tile_size=tile_size)
