@@ -20,7 +20,7 @@ Desktop.ini
 *.swp
 *.swo
 
-/results/
+/results/*
 
 *.pyc
 __pycache__
