@@ -393,8 +393,15 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         if self.itemHeld is not None:
-            item_rect = self.itemHeld.image.get_rect(center=self.rect.center)
-            surface.blit(self.itemHeld.image, item_rect.topleft)
+            if self.state in ("COOKING", "CHOPPING", "WASHING") and self.target_station:
+                # Draw on the station
+                station_rect = self.target_station.rect
+                item_rect = self.itemHeld.image.get_rect(center=station_rect.center)
+                surface.blit(self.itemHeld.image, item_rect.topleft)
+            else:
+                # Draw on the player
+                item_rect = self.itemHeld.image.get_rect(center=self.rect.center)
+                surface.blit(self.itemHeld.image, item_rect.topleft)
 
     def say(self, message: str):
         if self.blackboard:
