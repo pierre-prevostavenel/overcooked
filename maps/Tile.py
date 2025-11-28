@@ -17,6 +17,7 @@ class Tile(MySprite):
         "trash3": "assets/trash3.png",
         "player": "assets/player.png",
         'white_sink': "assets/white_sink.png",
+        'coffee_machine': "assets/coffee_machine.png"
     }
 
     def __init__(self, row, col, tile_type="whitefloor", tile_size=50):
