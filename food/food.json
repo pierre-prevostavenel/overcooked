@@ -92,10 +92,10 @@
       ]
     },
     {
-      "name": "ice_cream",
+      "name": "april_ice_cream",
       "states": [
         {
-          "state": "frozen",
+          "state": "raw",
           "image": "ice_cream.png",
           "actions": {}
         }
@@ -122,7 +122,7 @@
     {
       "name": "ice_cream",
       "ingredients": [
-        {"name": "ice_cream", "state": "frozen"}
+        {"name": "april_ice_cream", "state": "raw"}
       ]
     }
   ]

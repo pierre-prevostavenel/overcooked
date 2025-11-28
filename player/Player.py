@@ -265,7 +265,7 @@ class Player(pygame.sprite.Sprite):
                 state = state_data["state"]
                 src = (name, state)
                 actions = state_data.get("actions", {})
-                if state == "raw":
+                if state in "raw":
                     self.transitions[src] = [(None, "fetch")]
                 for action, result in actions.items():
                     dst = (result["name"], result["state"])
