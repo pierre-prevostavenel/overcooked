@@ -168,6 +168,7 @@ class Player(pygame.sprite.Sprite):
             "fry": "oven",
             "chop": "workbench",
             "wash": "white_sink",
+            "brew": "coffee_machine",
         }
 
         target_type = destinations.get(action)
@@ -183,6 +184,7 @@ class Player(pygame.sprite.Sprite):
                 "fry": "COOKING",
                 "chop": "CHOPPING",
                 "wash": "WASHING",
+                "brew": "COOKING", # Reusing COOKING state for brewing as it's similar (waiting at station)
             }
             self.state = state_map.get(action, "IDLE")
 

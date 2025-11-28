@@ -56,6 +56,9 @@ class Ingredient(Item):
     def wash(self):
         return self._transform("wash")
 
+    def brew(self):
+        return self._transform("brew")
+
     def chop(self):
         return self._transform("chop")
 

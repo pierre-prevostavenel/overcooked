@@ -22,7 +22,7 @@ class Maps:
             ["wall", "floor", "floor", "floor", "floor", "workbench2", "workbench2", "workbench2", "workbench2", "wall"],
             ["wall", "floor","floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
             ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
-            ["wall", "white_sink", "floor", "trash1", "floor", "floor", "floor", "floor", "oven", "wall"],
+            ["wall", "white_sink", "floor", "trash1", "coffee_machine", "floor", "floor", "floor", "oven", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
         ]
 
@@ -39,5 +39,7 @@ class Maps:
                     self.grid[r][c] = Oven(r, c, self.tile_size)
                 elif cell == "white_sink":
                     self.grid[r][c] = WhiteSink(r, c, self.tile_size)
+                elif cell == "coffee_machine":
+                    self.grid[r][c] = CoffeeMachine(r, c, self.tile_size)
                 else:
                     self.grid[r][c] = Tile(r, c, cell, self.tile_size)

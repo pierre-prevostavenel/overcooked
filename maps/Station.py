@@ -17,6 +17,7 @@ class Station(Tile):
             "fry": 6,
             "chop": 4,
             "wash": 4,
+            "brew": 5,
             "plate": 1,
         }
 
@@ -104,3 +105,21 @@ class WhiteSink(Station):
                 print(f"{ingredient} cannot be washed.")
         else:
             print(f"{player} has nothing to wash.")
+
+
+class CoffeeMachine(Station):
+    def __init__(self, row, col, tile_size=50):
+        super().__init__(row, col, "coffee_machine", action="brew", tile_size=tile_size)
+
+    def perform(self, player):
+        if player.itemHeld is not None:
+            ingredient = player.itemHeld
+            brewed_ingredient = ingredient.brew()
+            if brewed_ingredient:
+                player.itemHeld = brewed_ingredient
+                print(f"{player} brewed {ingredient} into {brewed_ingredient} at the coffee machine.")
+                print(f"{player} now holds {player.itemHeld}.")
+            else:
+                print(f"{ingredient} cannot be brewed.")
+        else:
+            print(f"{player} has nothing to brew.")

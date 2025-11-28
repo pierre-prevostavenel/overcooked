@@ -7,7 +7,10 @@
           "state": "raw",
           "image": "tomato_raw.png",
           "actions": {
-            "chop": {"name": "tomato", "state": "chopped"}
+            "chop": {
+              "name": "tomato",
+              "state": "chopped"
+            }
           }
         },
         {
@@ -24,7 +27,10 @@
           "state": "raw",
           "image": "raw_steak.png",
           "actions": {
-            "cook": {"name": "steak", "state": "cooked"}
+            "cook": {
+              "name": "steak",
+              "state": "cooked"
+            }
           }
         },
         {
@@ -41,14 +47,20 @@
           "state": "raw",
           "image": "salad.png",
           "actions": {
-            "wash": {"name": "lettuce", "state": "washed"}
+            "wash": {
+              "name": "lettuce",
+              "state": "washed"
+            }
           }
         },
         {
           "state": "washed",
           "image": "washed_salad.png",
           "actions": {
-            "chop": {"name": "lettuce", "state": "chopped"}
+            "chop": {
+              "name": "lettuce",
+              "state": "chopped"
+            }
           }
         },
         {
@@ -75,15 +87,24 @@
           "state": "raw",
           "image": "potato_raw.png",
           "actions": {
-            "cook": {"name": "potato", "state": "cooked"},
-            "chop": {"name": "potato", "state": "chopped"}
+            "cook": {
+              "name": "potato",
+              "state": "cooked"
+            },
+            "chop": {
+              "name": "potato",
+              "state": "chopped"
+            }
           }
         },
         {
           "state": "chopped",
           "image": "potato_chopped.png",
           "actions": {
-            "cook": {"name": "potato", "state": "cooked_chopped"}
+            "cook": {
+              "name": "potato",
+              "state": "cooked_chopped"
+            }
           }
         },
         {
@@ -107,29 +128,79 @@
           "actions": {}
         }
       ]
+    },
+    {
+      "name": "coffee_beans",
+      "states": [
+        {
+          "state": "raw",
+          "image": "coffee_beans.png",
+          "actions": {
+            "brew": {
+              "name": "coffee_beans",
+              "state": "brewed"
+            }
+          }
+        },
+        {
+          "state": "brewed",
+          "image": "coffee_cup.png",
+          "actions": {}
+        }
+      ]
     }
   ],
   "dishes": [
     {
       "name": "salad",
       "ingredients": [
-        {"name": "tomato", "state": "chopped"},
-        {"name": "lettuce", "state": "chopped"}
+        {
+          "name": "tomato",
+          "state": "chopped"
+        },
+        {
+          "name": "lettuce",
+          "state": "chopped"
+        }
       ]
     },
     {
       "name": "burger",
       "ingredients": [
-        {"name": "steak", "state": "cooked"},
-        {"name": "bun", "state": "raw"},
-        {"name": "tomato", "state": "chopped"},
-        {"name": "potato", "state": "cooked_chopped"}
+        {
+          "name": "steak",
+          "state": "cooked"
+        },
+        {
+          "name": "bun",
+          "state": "raw"
+        },
+        {
+          "name": "tomato",
+          "state": "chopped"
+        },
+        {
+          "name": "potato",
+          "state": "cooked_chopped"
+        }
       ]
     },
     {
       "name": "ice_cream",
       "ingredients": [
-        {"name": "april_ice_cream", "state": "raw"}
+        {
+          "name": "april_ice_cream",
+          "state": "raw"
+        }
+      ]
+    },
+    {
+      "name": "coffee",
+      "ingredients": [
+        {
+          "name": "coffee_beans",
+          "state": "brewed"
+        }
       ]
     }
   ]

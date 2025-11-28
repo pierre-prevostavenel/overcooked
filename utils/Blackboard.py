@@ -130,6 +130,8 @@ class Blackboard:
                         image_path = "assets/ingredients/chopped_salad.png"
                     elif dish_name == "ice_cream":
                         image_path = "assets/ingredients/ice_cream.png"
+                    elif dish_name == "coffee":
+                        image_path = "assets/ingredients/coffee_cup.png"
                     
                     if image_path and position:
                         self.visual_effects.append(VisualEffect(image_path, position, duration=240)) # 2 seconds at 120 FPS
@@ -175,18 +177,18 @@ class Blackboard:
         self.agent_states[agent_id] = state
 
     def draw(self, surface, font, x: int, y: int):
-        header = font.render("Tableau noir", True, (255, 255, 0))
+        header = font.render("BlackBoard", True, (255, 255, 0), (0, 0, 0))
         surface.blit(header, (x, y))
 
         for idx, message in enumerate(list(self.messages)[:6]):
-            text = font.render(message, True, (200, 200, 200))
+            text = font.render(message, True, (200, 200, 200), (0, 0, 0))
             surface.blit(text, (x, y + 22 + idx * 18))
 
         state_y = y + 22 + min(len(self.messages), 6) * 18 + 10
-        state_title = font.render("États agents :", True, (180, 200, 255))
+        state_title = font.render("États agents :", True, (180, 200, 255), (0, 0, 0))
         surface.blit(state_title, (x, state_y))
         for offset, (agent_id, state) in enumerate(sorted(self.agent_states.items())):
-            text = font.render(f"{agent_id}: {state}", True, (200, 200, 200))
+            text = font.render(f"{agent_id}: {state}", True, (200, 200, 200), (0, 0, 0))
             surface.blit(text, (x, state_y + 18 + offset * 18))
 
     def update_visuals(self):
