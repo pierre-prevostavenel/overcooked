@@ -39,14 +39,14 @@
       "states": [
         {
           "state": "raw",
-          "image": "lettuce_raw.png",
+          "image": "salad.png",
           "actions": {
             "chop": {"name": "lettuce", "state": "chopped"}
           }
         },
         {
           "state": "chopped",
-          "image": "lettuce_chopped.png",
+          "image": "chopped_salad.png",
           "actions": {}
         }
       ]
@@ -56,7 +56,7 @@
       "states": [
         {
           "state": "raw",
-          "image": "bun_raw.png",
+          "image": "bun.png",
           "actions": {}
         }
       ]
