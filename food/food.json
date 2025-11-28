@@ -12,7 +12,7 @@
         },
         {
           "state": "chopped",
-          "image": "tomato_chopped.png",
+          "image": "chopped_tomato.png",
           "actions": {}
         }
       ]
