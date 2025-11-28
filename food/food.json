@@ -22,14 +22,14 @@
       "states": [
         {
           "state": "raw",
-          "image": "steak_raw.png",
+          "image": "raw_steak.png",
           "actions": {
             "cook": {"name": "steak", "state": "cooked"}
           }
         },
         {
           "state": "cooked",
-          "image": "steak_cooked.png",
+          "image": "cooked_steak.png",
           "actions": {}
         }
       ]
@@ -76,12 +76,17 @@
           "state": "chopped",
           "image": "potato_chopped.png",
           "actions": {
-            "cook": {"name": "fries", "state": "cooked"}
+            "cook": {"name": "potato", "state": "cooked_chopped"}
           }
         },
         {
           "state": "cooked",
-          "image": "potato_cooked.png",
+          "image": "cooked_potato.png",
+          "actions": {}
+        },
+        {
+          "state": "cooked_chopped",
+          "image": "fries.png",
           "actions": {}
         }
       ]
@@ -100,7 +105,8 @@
       "ingredients": [
         {"name": "steak", "state": "cooked"},
         {"name": "bun", "state": "raw"},
-        {"name": "tomato", "state": "chopped"}
+        {"name": "tomato", "state": "chopped"},
+        {"name": "potato", "state": "cooked_chopped"}
       ]
     }
   ]
