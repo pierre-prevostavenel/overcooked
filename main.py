@@ -16,7 +16,10 @@ from utils.GameState import GameState
 from utils.Blackboard import Blackboard
 
 
-
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import Counter
 
 
 class Game:
@@ -147,11 +150,11 @@ class Game:
         if success:
             self.score += 1
             self.gameState.complete_order()
-            self.blackboard.announce(f"Commande « {order.desired_dish.name} » servie !")
+            self.blackboard.announce(f"Commande « {order.desired_dish.name} » servie !, score : {self.score}")
         else:
             self.failed_orders += 1
             self.gameState.fail_order()
-            self.blackboard.announce(f"Commande « {order.desired_dish.name} » refusée.")
+            self.blackboard.announce(f"Commande « {order.desired_dish.name} » refusée, échecs : {self.failed_orders}")
         self.blackboard.finalize_order(order)
         return success
 
@@ -162,7 +165,8 @@ class Game:
                 self.orders.remove(o)
                 self.gameState.fail_order()
                 self.blackboard.finalize_order(o)
-                self.blackboard.announce(f"Commande « {o.desired_dish.name} » a expiré.")
+                self.failed_orders += 1
+                self.blackboard.announce(f"Commande « {o.desired_dish.name} » a expiré, échecs : {self.failed_orders}")
 
         if randint(1, 600) <= 1:
             order = Order(30)
@@ -235,6 +239,123 @@ def run_games(nb_games,max_step, nb_agents):
     return scores, failed_orders
 
 
+def plot_histogram(values, xlabel, ylabel, title, output_file, color='skyblue', figsize=(10,6)):
+    counts = Counter(values)
+    labels = sorted(counts.keys())
+    data = [counts[l] for l in labels]
+
+    plt.figure(figsize=figsize)
+    plt.bar(labels, data, color=color, edgecolor='black')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.xticks(labels)
+    plt.grid(axis='y', alpha=0.75)
+    plt.savefig(output_file)
+    plt.close()  # ferme la figure pour éviter d'accumuler en mémoire
+    print(f"\nGraph saved to {output_file}")
+
+
+def plot_per_game_stats(scores, failed_orders, output_file, figsize=(12, 6)):
+    games = range(1, len(scores) + 1)
+    
+    plt.figure(figsize=figsize)
+    
+    # Tracé des courbes
+    plt.plot(games, scores, color='green', label='Succès', marker='o', linestyle='-', markersize=4)
+    plt.plot(games, failed_orders, color='red', label='Échecs', marker='x', linestyle='-', markersize=4)
+    
+    # Ajout des labels et titres
+    plt.xlabel('Game', fontweight='bold')
+    plt.ylabel('Nombre de commandes', fontweight='bold')
+    plt.title('Commandes réussies et échouées par partie')
+    
+    # Si beaucoup de points, on allège les ticks de l'axe X
+    if len(games) > 20:
+        # Affiche un tick tous les N points pour éviter le chevauchement
+        step = len(games) // 20 + 1
+        plt.xticks(games[::step], games[::step])
+    else:
+        plt.xticks(games, games)
+        
+    plt.legend()
+    
+    plt.grid(axis='both', alpha=0.5, linestyle='--')
+    
+    plt.savefig(output_file)
+    plt.close()
+    print(f"\nPer-game stats graph saved to {output_file}")
+
+
+def plot_scatter(scores, failed_orders, output_file, figsize=(12, 6)):
+    plt.figure(figsize=figsize)
+    
+    # Tracé des nuages de points
+    plt.scatter(scores, failed_orders, color='blue', alpha=0.6, s=10)
+    
+    # Ajout des labels et titres
+    plt.xlabel('Score', fontweight='bold')
+    plt.ylabel('Échecs', fontweight='bold')
+    plt.title('Corrélation entre le score et le nombre d\'échecs')
+    
+    plt.grid(axis='both', alpha=0.5, linestyle='--')
+    
+    plt.savefig(output_file)
+    plt.close()
+    print(f"\nScatter plot saved to {output_file}")
+
+def plot_boxplot(scores, failed_orders, output_file, figsize=(12, 6)):
+    plt.figure(figsize=figsize)
+    
+    # Création des boxplots
+    plt.boxplot([scores, failed_orders], tick_labels=['Succès', 'Échecs'])
+    
+    # Ajout des labels et titres
+    plt.xlabel('Type', fontweight='bold')
+    plt.ylabel('Nombre de commandes', fontweight='bold')
+    plt.title('Boxplot des commandes réussies et échouées')
+    
+    plt.grid(axis='y', alpha=0.75)
+    
+    plt.savefig(output_file)
+    plt.close()
+    print(f"\nBoxplot saved to {output_file}")
+
+def plot_heatmap(scores, failed_orders, output_file, figsize=(12, 6)):
+    plt.figure(figsize=figsize)
+    
+    # Création de la matrice de corrélation
+    correlation_matrix = np.corrcoef(scores, failed_orders)
+    
+    # Tracé du heatmap
+    plt.imshow(correlation_matrix, cmap='coolwarm', interpolation='nearest')
+    plt.colorbar()
+    
+    # Ajout des labels et titres
+    plt.xlabel('Type', fontweight='bold')
+    plt.ylabel('Type', fontweight='bold')
+    plt.title('Heatmap de corrélation entre le score et le nombre d\'échecs')
+    
+    plt.savefig(output_file)
+    plt.close()
+    print(f"\nHeatmap saved to {output_file}")
+
+def plot_density(scores, failed_orders, output_file, figsize=(12, 6)):
+    plt.figure(figsize=figsize)
+    
+    # Tracé de la densité 2D
+    plt.hist2d(scores, failed_orders, bins=(10, 10), cmap='Blues')
+    plt.colorbar(label='Nombre de parties')
+    
+    # Ajout des labels et titres
+    plt.xlabel('Score', fontweight='bold')
+    plt.ylabel('Échecs', fontweight='bold')
+    plt.title('Densité des résultats (Score vs Échecs)')
+    
+    plt.savefig(output_file)
+    plt.close()
+    print(f"\nDensity plot saved to {output_file}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Overcooked Simulation")
     parser.add_argument("--simulation", action="store_true", help="launch a fast simulation")
@@ -271,40 +392,57 @@ if __name__ == "__main__":
 
         # Generate Matplotlib Graph
         try:
-            import matplotlib.pyplot as plt
-            from collections import Counter
-            
-            score_counts = Counter(scores)
-            labels = sorted(score_counts.keys())
-            data = [score_counts[l] for l in labels]
+            # Histogramme des succès
+            plot_histogram(
+                values=scores,
+                xlabel='Score',
+                ylabel='Frequency',
+                title=f'Simulation Results ({args.num_games} games, {args.nb_agents} agents) - max steps: {args.max_steps}',
+                output_file=f"{args.output}_{args.nb_agents}_agents.svg"
+            )
 
-            plt.figure(figsize=(10, 6))
-            plt.bar(labels, data, color='skyblue', edgecolor='black')
-            plt.xlabel('Score')
-            plt.ylabel('Frequency')
-            plt.title(f'Simulation Results ({args.num_games} games, {args.nb_agents} agents) - max steps: {args.max_steps}')
-            plt.xticks(labels)
-            plt.grid(axis='y', alpha=0.75)
-            
-            file_out_name= args.output+"_"+str(args.nb_agents)+"_agents.svg"
-            plt.savefig(file_out_name)
-            print(f"\nGraph saved to {file_out_name}")
+            # Histogramme des échecs
+            plot_histogram(
+                values=failed_orders,
+                xlabel='Failed Orders',
+                ylabel='Frequency',
+                title=f'Simulation Results ({args.num_games} games, {args.nb_agents} agents) - max steps: {args.max_steps}',
+                output_file=f"{args.output}_{args.nb_agents}_agents_failed_orders.svg"
+            )
 
-            failed_orders_counts = Counter(failed_orders)
-            labels = sorted(failed_orders_counts.keys())
-            data = [failed_orders_counts[l] for l in labels]
+            # Graphique par partie (succès vs échecs)
+            plot_per_game_stats(
+                scores=scores,
+                failed_orders=failed_orders,
+                output_file=f"{args.output}_{args.nb_agents}_agents_per_game.svg"
+            )
 
-            plt.figure(figsize=(10, 6))
-            plt.bar(labels, data, color='skyblue', edgecolor='black')
-            plt.xlabel('Failed Orders')
-            plt.ylabel('Frequency')
-            plt.title(f'Simulation Results ({args.num_games} games, {args.nb_agents} agents) - max steps: {args.max_steps}')
-            plt.xticks(labels)
-            plt.grid(axis='y', alpha=0.75)
-            
-            file_out_name= args.output+"_"+str(args.nb_agents)+"_agents_failed_orders.svg"
-            plt.savefig(file_out_name)
-            print(f"\nGraph saved to {file_out_name}")
+            plot_scatter(
+                scores=scores,
+                failed_orders=failed_orders,
+                output_file=f"{args.output}_{args.nb_agents}_agents_scatter.svg"
+            )
+
+            plot_boxplot(
+                scores=scores,
+                failed_orders=failed_orders,
+                output_file=f"{args.output}_{args.nb_agents}_agents_boxplot.svg"
+            )
+
+            plot_heatmap(
+                scores=scores,
+                failed_orders=failed_orders,
+                output_file=f"{args.output}_{args.nb_agents}_agents_heatmap.svg"
+            )
+
+            plot_density(
+                scores=scores,
+                failed_orders=failed_orders,
+                output_file=f"{args.output}_{args.nb_agents}_agents_density.svg"
+            )
+
+
+
 
         except ImportError:
             print("\n[Error] matplotlib is not installed. Cannot generate graph.")

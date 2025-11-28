@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.init_transitions(json_path)
 
         self.move_timer = 0
-        self.move_period = 30
+        self.move_period = 15
         self.interaction_progress = 0
 
         self.state = "IDLE"

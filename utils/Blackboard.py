@@ -10,6 +10,8 @@ from food.Dish import Plate
 
 class Blackboard:
     def __init__(self, max_messages: int = 8):
+        self.display = False
+
         self.messages = deque(maxlen=max_messages)
         self.agent_states: dict[int, str] = {}
         self.order_tasks: dict[int, dict] = {}
@@ -177,6 +179,8 @@ class Blackboard:
         self.agent_states[agent_id] = state
 
     def draw(self, surface, font, x: int, y: int):
+        if not self.display:
+            return
         header = font.render("BlackBoard", True, (255, 255, 0), (0, 0, 0))
         surface.blit(header, (x, y))
 
