@@ -197,16 +197,37 @@ class Player(pygame.sprite.Sprite):
                 next_pos = self.path[0]
                 if not self._can_move_to(next_pos):
                     self.blocked_steps += 1
-                    if self.blocked_steps >= 3 and self.env and self.target_station:
+                    
+                    # Strategy 1: Repath Around (blocked > 2 steps)
+                    if self.blocked_steps > 2 and self.env and self.target_station:
                         occupied = self._occupied_positions()
+                        # Try to find a path avoiding current agent positions
                         new_path = self.get_path(self.env.maps, self.target_station, occupied_positions=occupied)
                         if new_path:
                             self.path = new_path
-                        else:
-                            self.state = "IDLE"
-                            self.path = []
-                        self.blocked_steps = 0
+                            self.blocked_steps = 0
+                            return
+
+                    # Strategy 2: Step Aside / Yield (blocked > 5 steps)
+                    if self.blocked_steps > 5:
+                        # Find a free adjacent cell to step aside
+                        neighbors = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+                        for dx, dy in neighbors:
+                            nx, ny = self.x + dx, self.y + dy
+                            # Don't step into the blocked target or walls/occupied spots
+                            if (nx, ny) != next_pos and self._can_move_to((nx, ny)):
+                                self.x, self.y = nx, ny
+                                self.position = self._to_index(self.x, self.y)
+                                self.rect.topleft = (self.x * self.tile_size, self.y * self.tile_size)
+                                self.blocked_steps = 0
+                                self.path = [] # Force replan from new position
+                                self.say("Je me décale pour laisser passer.")
+                                return
+                        
+                        # If we can't step aside, we might be truly stuck or in a deadlock
+                        # Just wait and hope the other agent moves
                     return
+                
                 self.blocked_steps = 0
                 self.path.pop(0)
                 self.x, self.y = next_pos
@@ -450,6 +471,7 @@ class Player(pygame.sprite.Sprite):
             return False
         if self.env.maps.grid[target_y][target_x].tile_type != "floor":
             return False
+        
         for agent in self.env.players:
             if agent is self:
                 continue
