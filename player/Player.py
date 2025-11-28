@@ -229,7 +229,9 @@ class Player(pygame.sprite.Sprite):
             case "PLATING":
                 if self.interact("plate") == 0:
                     if self.blackboard and self.itemHeld and self.current_order:
-                        self.blackboard.add_to_plate(self.current_order, self.itemHeld)
+                        # Pass the position of the plate (station) to the blackboard
+                        plate_pos = self.target_station.rect.center if self.target_station else None
+                        self.blackboard.add_to_plate(self.current_order, self.itemHeld, position=plate_pos)
                         if self.current_task:
                             self.blackboard.complete_task(self.agent_id, self.current_order, self.current_task)
                             self.say(

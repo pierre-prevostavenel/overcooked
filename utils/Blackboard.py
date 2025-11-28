@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pygame
+
 from collections import deque
 from copy import deepcopy
 
@@ -11,6 +13,7 @@ class Blackboard:
         self.messages = deque(maxlen=max_messages)
         self.agent_states: dict[int, str] = {}
         self.order_tasks: dict[int, dict] = {}
+        self.visual_effects: list[VisualEffect] = []
 
     def post(self, agent_id: int, message: str) -> str:
         entry = f"[Agent {agent_id}] {message}"
@@ -98,10 +101,38 @@ class Blackboard:
                 task["agent"] = None
                 break
 
-    def add_to_plate(self, order, ingredient):
+    def add_to_plate(self, order, ingredient, position=None):
         entry = self.order_tasks.get(id(order))
         if entry and ingredient:
             entry["plate"].add_ingr(ingredient)
+            
+            # Handle visual representation of the ingredient on the plate
+            if position:
+                if "visuals" not in entry:
+                    entry["visuals"] = []
+                
+                # Offset slightly for stacking effect
+                offset_x = (len(entry["visuals"]) % 2) * 5 - 2
+                offset_y = (len(entry["visuals"]) // 2) * 5 - 2
+                visual_pos = (position[0] + offset_x, position[1] + offset_y)
+                
+                entry["visuals"].append((ingredient.image, visual_pos))
+
+            # Check if dish is complete to show the final dish visual
+            if self.order_ready(order):
+                # Double check if the plate matches the order
+                if entry["plate"].verify(order):
+                    dish_name = order.desired_dish.name
+                    image_path = None
+                    if dish_name == "burger":
+                        image_path = "assets/ingredients/burger_fries.png"
+                    elif dish_name == "salad":
+                        image_path = "assets/ingredients/chopped_salad.png"
+                    elif dish_name == "ice_cream":
+                        image_path = "assets/ingredients/ice_cream.png"
+                    
+                    if image_path and position:
+                        self.visual_effects.append(VisualEffect(image_path, position, duration=240)) # 2 seconds at 120 FPS
 
     def get_plate(self, order):
         entry = self.order_tasks.get(id(order))
@@ -157,3 +188,42 @@ class Blackboard:
         for offset, (agent_id, state) in enumerate(sorted(self.agent_states.items())):
             text = font.render(f"{agent_id}: {state}", True, (200, 200, 200))
             surface.blit(text, (x, state_y + 18 + offset * 18))
+
+    def update_visuals(self):
+        for effect in self.visual_effects[:]:
+            effect.timer -= 1
+            if effect.timer <= 0:
+                self.visual_effects.remove(effect)
+
+    def draw_visuals(self, surface):
+        for effect in self.visual_effects:
+            if effect.image:
+                rect = effect.image.get_rect(center=effect.position)
+                surface.blit(effect.image, rect)
+
+    def draw_plated_ingredients(self, surface):
+        for entry in self.order_tasks.values():
+            plate = entry["plate"]
+            # We need a position for the plate. Since we don't store it explicitly in the plate,
+            # we rely on the last added ingredient's position or a default if available.
+            # However, the plan was to store position in add_to_plate.
+            # Let's check where we store it.
+            # We will store a list of (image, position) in the entry for rendering.
+            if "visuals" in entry:
+                for img, pos in entry["visuals"]:
+                    rect = img.get_rect(center=pos)
+                    surface.blit(img, rect)
+
+
+class VisualEffect:
+    def __init__(self, image_path, position, duration=60):
+        self.position = position
+        self.timer = duration
+        try:
+            self.image = pygame.image.load(image_path).convert_alpha()
+            # Scale up a bit for visibility if needed, or keep as is.
+            # Let's scale it to be clear.
+            self.image = pygame.transform.scale(self.image, (100, 100))
+        except Exception as e:
+            print(f"Failed to load visual effect image: {image_path} - {e}")
+            self.image = None

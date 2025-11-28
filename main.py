@@ -20,7 +20,7 @@ class Game:
 
         json_path = os.path.join(os.path.dirname(__file__), "food", "food.json")
         Ingredient.init(json_path)
-        Dish.init(json_path)
+        Ingredient.init(json_path)
 
         self.blackboard = Blackboard()
 
@@ -28,6 +28,10 @@ class Game:
         self.screen_height = screen_height
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         pygame.display.set_caption("OverCooked")
+        
+        # Init dishes after display init because they load images
+        Dish.init(json_path)
+        
         self.clock = pygame.time.Clock()
 
         self.tile_size = screen_width // 10
@@ -89,6 +93,7 @@ class Game:
 
     def update(self):
         self.all_sprites.update(self)
+        self.blackboard.update_visuals()
 
     def get_orders(self):
         return self.orders
@@ -141,6 +146,13 @@ class Game:
         )
         self.screen.blit(score_text, (10, self.screen_height - 55))
         self.screen.blit(stats_text, (10, self.screen_height - 30))
+        self.screen.blit(score_text, (10, self.screen_height - 55))
+        self.screen.blit(stats_text, (10, self.screen_height - 30))
+        
+        # Draw plated ingredients and visual effects
+        self.blackboard.draw_plated_ingredients(self.screen)
+        self.blackboard.draw_visuals(self.screen)
+        
         self.blackboard.draw(self.screen, self.hud_font, self.screen_width - 260, 10)
 
         pygame.display.flip()

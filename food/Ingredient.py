@@ -53,6 +53,9 @@ class Ingredient(Item):
     def cook(self):
         return self._transform("cook")
 
+    def wash(self):
+        return self._transform("wash")
+
     def chop(self):
         return self._transform("chop")
 
