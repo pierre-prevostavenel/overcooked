@@ -145,9 +145,11 @@ class Player(pygame.sprite.Sprite):
                             self.target_game = game
                             self.say(f"Je livre « {self.current_order.desired_dish.name} » au passe.")
                     else:
-                        self._notify_idle("La livraison est déjà prise, j'attends mon tour.")
+                        self.say(f"La livraison de « {self.current_order.desired_dish.name} » est prise, je cherche une autre tâche.")
+                        self.reset_plan()
                 else:
-                    self._notify_idle("Plus d'ingrédients disponibles, je reste en veille.")
+                    self.say(f"Plus de tâche sur « {self.current_order.desired_dish.name} », je cherche ailleurs.")
+                    self.reset_plan()
                 return
 
         if not self.current_plan:
