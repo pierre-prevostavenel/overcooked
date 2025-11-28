@@ -90,6 +90,16 @@
           "actions": {}
         }
       ]
+    },
+    {
+      "name": "ice_cream",
+      "states": [
+        {
+          "state": "frozen",
+          "image": "ice_cream.png",
+          "actions": {}
+        }
+      ]
     }
   ],
   "dishes": [
@@ -107,6 +117,12 @@
         {"name": "bun", "state": "raw"},
         {"name": "tomato", "state": "chopped"},
         {"name": "potato", "state": "cooked_chopped"}
+      ]
+    },
+    {
+      "name": "ice_cream",
+      "ingredients": [
+        {"name": "ice_cream", "state": "frozen"}
       ]
     }
   ]
