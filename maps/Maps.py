@@ -14,15 +14,15 @@ class Maps:
     def _build_map(self):
         """Map labyrinthe : Workbench = mur, floor = chemin, Fridge = objectif"""
         layout = [
-            ["wall", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench", "wall"],
-            ["wall", "table", "floor", "floor", "floor", "floor", "floor", "floor", "workbench", "wall"],
-            ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "workbench2", "wall"],
-            ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "fridge", "wall"],
-            ["wall", "trash1", "floor", "floor", "floor", "floor", "floor", "floor","trash2", "wall"],
-            ["wall", "floor", "floor", "floor", "floor", "workbench2", "workbench2", "workbench2", "workbench2", "wall"],
-            ["wall", "floor","floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "workbench2", "wall"],
             ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
-            ["wall", "white_sink", "floor", "trash1", "coffee_machine", "floor", "floor", "floor", "oven", "wall"],
+            ["wall", "floor", "floor", "table", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "trash1", "floor", "floor", "floor", "floor", "floor", "floor","floor", "wall"],
+            ["wall", "workbench", "floor", "floor", "floor", "floor", "floor", "floor", "white_sink", "wall"],
+            ["wall", "workbench","floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "workbench", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "wall"],
+            ["wall", "workbench", "floor", "trash1", "coffee_machine", "floor", "fridge", "floor", "oven", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
         ]
 
