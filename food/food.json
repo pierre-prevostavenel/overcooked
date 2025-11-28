@@ -41,6 +41,13 @@
           "state": "raw",
           "image": "salad.png",
           "actions": {
+            "wash": {"name": "lettuce", "state": "washed"}
+          }
+        },
+        {
+          "state": "washed",
+          "image": "washed_salad.png",
+          "actions": {
             "chop": {"name": "lettuce", "state": "chopped"}
           }
         },
