@@ -6,8 +6,11 @@ Projet réalisé par :
 - Enzo LARAMY
 - Pierre PREVOST--AVENEL
 
-**Fonctionnalités :**
-- 
+**Exécution**
+Pour lancer le projet, exécuter le fichier `main.py`. Une aide est disponible en ajoutant l'argument `--help`.
+
+**Document stratégie**
+[https://docs.google.com/document/d/1rD8_TNHbQcILaN--ImmMIqqzrjkj59xWzVs9whkNdO0/edit?usp=sharing](https://docs.google.com/document/d/1rD8_TNHbQcILaN--ImmMIqqzrjkj59xWzVs9whkNdO0/edit?usp=sharing)
 
 **Lien GitHub :**
 [https://github.com/pierre-prevostavenel/overcooked/](https://github.com/pierre-prevostavenel/overcooked/)
